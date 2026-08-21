@@ -188,8 +188,8 @@ npm run dev:frontend
 
 ### 5. Open in Browser
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5000/api/health
+- **Frontend**: (https://kathavani-frontend.onrender.com)
+- **Backend API**: (https://kathavani-backend.onrender.com)
 
 ---
 
