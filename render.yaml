@@ -2,10 +2,12 @@ services:
   # Express Backend Web Service
   - type: web
     name: kathavani-backend
+    plan: free
     env: node
     rootDir: backend
     buildCommand: npm install
     startCommand: node server.js
+
     envVars:
       - key: PORT
         value: 10000
