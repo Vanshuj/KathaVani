@@ -33,17 +33,6 @@ export default function AuthPage() {
     }
   };
 
-  const demoLogin = async () => {
-    setLoading(true);
-    try {
-      await login('priya@demo.com', 'demo123');
-      showNotification('Logged in as demo user!', 'success');
-      navigate('/');
-    } catch {
-      setError('Demo login failed');
-    } finally { setLoading(false); }
-  };
-
   return (
     <div className="flex-center fade-in" style={{ minHeight: '60vh' }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
@@ -94,12 +83,6 @@ export default function AuthPage() {
               {loading ? 'Please wait…' : (mode === 'login' ? '🪔 Enter the Hub' : '✨ Create Account')}
             </button>
           </form>
-
-          <div style={{ margin: '1rem 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>or</div>
-
-          <button onClick={demoLogin} className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }} disabled={loading}>
-            🎭 Try Demo Account (priya@demo.com)
-          </button>
         </div>
       </div>
     </div>
