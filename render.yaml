@@ -10,14 +10,11 @@ services:
       - key: PORT
         value: 10000
       - key: MONGODB_URI
-        value: inmemory
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        fromService:
-          name: kathavani-frontend
-          type: web
-          property: url
+        sync: false
 
   # React Frontend Static Site
   - type: web
@@ -28,9 +25,7 @@ services:
     staticPublishPath: build
     envVars:
       - key: REACT_APP_API_URL
-        fromService:
-          name: kathavani-backend
-          type: web
-          property: url
+        sync: false
+
 
 
