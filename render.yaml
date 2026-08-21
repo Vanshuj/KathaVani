@@ -16,19 +16,21 @@ services:
       - key: FRONTEND_URL
         fromService:
           name: kathavani-frontend
-          type: static
+          type: web
           property: url
 
   # React Frontend Static Site
-  - type: static
+  - type: web
     name: kathavani-frontend
+    env: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: build
+    staticPublishPath: build
     envVars:
       - key: REACT_APP_API_URL
         fromService:
           name: kathavani-backend
           type: web
           property: url
+
 
