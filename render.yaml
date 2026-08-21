@@ -1,0 +1,34 @@
+services:
+  # Express Backend Web Service
+  - type: web
+    name: kathavani-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: inmemory
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        fromService:
+          name: kathavani-frontend
+          type: static
+          property: url
+
+  # React Frontend Static Site
+  - type: static
+    name: kathavani-frontend
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishDir: build
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          name: kathavani-backend
+          type: web
+          property: url
+
