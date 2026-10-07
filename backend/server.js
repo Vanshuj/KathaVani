@@ -37,6 +37,13 @@ app.use('/api/users', userRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/vault', vaultRoutes);
 
+// Fallback routes in case frontend sends requests without /api prefix
+app.use('/auth', authRoutes);
+app.use('/stories', storyRoutes);
+app.use('/users', userRoutes);
+app.use('/gamification', gamificationRoutes);
+app.use('/vault', vaultRoutes);
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
