@@ -1,54 +1,49 @@
 import React, { useMemo } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 
 const HISTORICAL_KEYWORDS = ['chola', 'mughal', 'maurya', 'gupta', 'maratha', 'ashoka', 'akbar', 'vijayanagara', 'british raj', 'partition', 'gandhi', 'rajput', 'vedic', 'harappan', 'pala', 'chera', 'pandya', 'satavahana'];
 
 export default function AuthenticityMeter({ content = '', tags = [] }) {
-  const score = useMemo(() => {
+  const matchedKeywords = useMemo(() => {
     const text = (content + ' ' + tags.join(' ')).toLowerCase();
-    let base = 55;
-    if (content.length > 100) base += 5;
-    if (content.length > 500) base += 5;
-    HISTORICAL_KEYWORDS.forEach(kw => { if (text.includes(kw)) base += 3; });
-    if (tags.length > 0) base += 2;
-    if (tags.length > 2) base += 3;
-    return Math.min(99, base);
+    return HISTORICAL_KEYWORDS.filter(kw => text.includes(kw));
   }, [content, tags]);
 
-  const getColor = (s) => {
-    if (s >= 85) return 'var(--jade)';
-    if (s >= 70) return 'var(--gold)';
-    return 'var(--terracotta)';
-  };
-
-  const getLabel = (s) => {
-    if (s >= 90) return 'Highly Authentic';
-    if (s >= 80) return 'Well Researched';
-    if (s >= 70) return 'Reasonably Authentic';
-    if (s >= 60) return 'Needs More Context';
-    return 'Add Historical Details';
-  };
+  const level = useMemo(() => {
+    if (matchedKeywords.length >= 2 || (tags.length >= 2 && matchedKeywords.length >= 1)) {
+      return { label: 'Extensive Heritage References', badge: 'High Depth', color: 'var(--jade)' };
+    }
+    if (matchedKeywords.length === 1 || tags.length >= 1) {
+      return { label: 'Regional Oral Context Present', badge: 'Regional Match', color: 'var(--gold)' };
+    }
+    return { label: 'Community Folk Tale', badge: 'Community Archive', color: 'var(--terracotta)' };
+  }, [matchedKeywords, tags]);
 
   return (
     <div className="card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-        <h3 style={{ margin: 0, fontSize: '1rem' }}>🏺 Cultural Authenticity</h3>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '1.4rem', color: getColor(score) }}>
-          {score}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+        <h3 style={{ margin: 0, fontSize: '1rem', display: 'flex', alignItems: 'center' }}>
+          <FontAwesomeIcon icon={faShieldAlt} style={{ marginRight: 6, color: level.color }} />
+          Heritage Context & Archival Grounding
+        </h3>
+        <span className="badge" style={{ background: `${level.color}22`, color: level.color, border: `1px solid ${level.color}44`, fontWeight: 600 }}>
+          {level.badge}
         </span>
       </div>
-      <div className="authenticity-bar" style={{ marginBottom: '0.5rem' }}>
-        <div 
-          className={`authenticity-fill ${score >= 80 ? 'shimmer-active' : ''}`} 
-          style={{ 
-            width: `${score}%`, 
-            transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)', 
-            background: `linear-gradient(90deg, var(--jade), ${getColor(score)})` 
-          }} 
-        />
-      </div>
-      <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-        {getLabel(score)} · Include historical terms & regional details to improve score
+      <p style={{ margin: '0 0 0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+        <strong>{level.label}:</strong> Story analyzed for regional terminology and traditional cultural markers.
       </p>
+      {matchedKeywords.length > 0 && (
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', alignItems: 'center', marginTop: '0.5rem' }}>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Identified traditions:</span>
+          {matchedKeywords.map(kw => (
+            <span key={kw} style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', textTransform: 'capitalize' }}>
+              {kw}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

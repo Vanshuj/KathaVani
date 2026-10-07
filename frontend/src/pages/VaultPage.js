@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDownload, faCheck, faVault, faSync, faTag } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faDownload, faCheck, faVault, faSync, faTag, 
+  faHeart, faBookOpen, faHdd, faBroadcastTower, faMicrophone, faCircle 
+} from '@fortawesome/free-solid-svg-icons';
 import { getOfflinePacks as apiGetOfflinePacks, syncOfflineStories } from '../services/api';
 import { savePackOffline, getOfflinePacks, isPackDownloaded, removeOfflinePack, getPendingStories, clearPendingStories } from '../services/offline';
 import { getStories, getVaultTags } from '../services/api';
@@ -102,8 +105,11 @@ export default function VaultPage() {
               </p>
               <div style={{ marginTop: '0.75rem', display: 'flex', gap: '1rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 <span>by {story.authorName}</span>
-                <span style={{ color: 'var(--jade)', fontWeight: 700 }}>{story.authenticity}% authentic</span>
-                <span style={{ marginLeft: 'auto' }}>❤️ {story.votes}</span>
+                <span style={{ color: 'var(--jade)', fontWeight: 600 }}>{story.authenticity}% heritage match</span>
+                <span style={{ marginLeft: 'auto' }}>
+                  <FontAwesomeIcon icon={faHeart} style={{ color: 'var(--terracotta)', marginRight: 4 }} />
+                  {story.votes}
+                </span>
               </div>
             </div>
           ))}
@@ -113,21 +119,25 @@ export default function VaultPage() {
       {tab === 'offline' && (
         <div>
           <div style={{ background: isOnline ? 'rgba(58,122,92,0.08)' : 'rgba(201,149,42,0.08)', border: `1px solid ${isOnline ? 'rgba(58,122,92,0.2)' : 'rgba(201,149,42,0.3)'}`, borderRadius: 'var(--radius-md)', padding: '0.75rem 1rem', marginBottom: '1.25rem', fontSize: '0.88rem' }}>
-            {isOnline ? '🟢 You\'re online. Downloads will save to your device for offline access.' : '🟡 You\'re offline. Stories you\'ve downloaded are available below.'}
+            {isOnline ? (
+              <span><FontAwesomeIcon icon={faCircle} style={{ color: 'var(--jade)', fontSize: '0.75rem', marginRight: 6 }} /> You are online. Downloads will save to your device storage for offline reading.</span>
+            ) : (
+              <span><FontAwesomeIcon icon={faCircle} style={{ color: 'var(--gold)', fontSize: '0.75rem', marginRight: 6 }} /> You are offline. Stories you have downloaded are available below.</span>
+            )}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
             {packs.map((pack, i) => (
               <div key={pack.id} className={`card card-interactive slide-in stagger-${(i % 3) + 1}`}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
                   <h3 style={{ margin: 0, fontSize: '1.05rem' }}>{pack.name}</h3>
-                  {localPacks[pack.id] && <span style={{ background: 'rgba(58,122,92,0.15)', color: 'var(--jade)', padding: '0.2rem 0.6rem', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700 }}>
-                    <FontAwesomeIcon icon={faCheck} style={{ marginRight: 3 }} />Saved
+                  {localPacks[pack.id] && <span style={{ background: 'rgba(58,122,92,0.15)', color: 'var(--jade)', padding: '0.2rem 0.6rem', borderRadius: 'var(--radius-sm)', fontSize: '0.75rem', fontWeight: 600 }}>
+                    <FontAwesomeIcon icon={faCheck} style={{ marginRight: 4 }} />Saved
                   </span>}
                 </div>
                 <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>{pack.description}</p>
                 <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
-                  <span>📖 {pack.storyCount} stories</span>
-                  <span>💾 {pack.size}</span>
+                  <span><FontAwesomeIcon icon={faBookOpen} style={{ marginRight: 5 }} />{pack.storyCount} stories</span>
+                  <span><FontAwesomeIcon icon={faHdd} style={{ marginRight: 5 }} />{pack.size}</span>
                 </div>
                 {localPacks[pack.id] ? (
                   <button onClick={() => handleRemove(pack.id)} className="btn btn-ghost btn-sm">Remove Offline Copy</button>
@@ -142,12 +152,15 @@ export default function VaultPage() {
 
           {/* Offline Radio hint */}
           <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(44,62,122,0.06)', border: '1px solid rgba(44,62,122,0.15)' }}>
-            <h3 style={{ color: 'var(--indigo)', marginBottom: '0.5rem' }}>📻 Offline Story Radio</h3>
+            <h3 style={{ color: 'var(--indigo)', marginBottom: '0.5rem' }}>
+              <FontAwesomeIcon icon={faBroadcastTower} style={{ marginRight: 6 }} />
+              Offline Story Radio
+            </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginBottom: '0.75rem' }}>
-              Enable peer-to-peer story sharing in areas with no internet. Share downloaded packs with nearby devices using WebRTC or local WiFi.
+              Peer-to-peer story sharing for areas with low connectivity. Share downloaded packs with nearby devices using local network protocols.
             </p>
-            <button className="btn btn-ghost btn-sm" onClick={() => showNotification('P2P sharing coming soon! For now, download packs to share physically or via local network.', 'info')}>
-              Learn About P2P Sharing
+            <button className="btn btn-ghost btn-sm" onClick={() => showNotification('P2P local sharing protocol is currently under community development.', 'info')}>
+              Learn About Local Sharing
             </button>
           </div>
         </div>
@@ -169,9 +182,9 @@ export default function VaultPage() {
           {user && (
             <div className="card" style={{ background: 'linear-gradient(135deg, rgba(180,95,43,0.06), rgba(201,149,42,0.06))', textAlign: 'center' }}>
               <h3>Add to the Vault</h3>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Your stories help preserve India's living heritage</p>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Your contributions help preserve India's living heritage</p>
               <button onClick={() => navigate('/storyteller')} className="btn btn-primary">
-                🎙️ Share Your Story
+                <FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 6 }} /> Share Your Story
               </button>
             </div>
           )}

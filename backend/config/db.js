@@ -57,7 +57,7 @@ const SEED_STORIES = [
   },
   {
     title: "Kaveri's Secret Waters",
-    content: "The river Kaveri holds secrets older than memory. In the village of Srirangapatna, an old boatman named Muniswamy knew where the river whispered ancient Sanskrit verses at midnight. His granddaughter dismisses the legends—until the night the river speaks to her...",
+    content: "The river Kaveri holds secrets older than memory. In the village of Srirangapatna, an old boatman named Muniswamy knew where the river whispered ancient Sanskrit verses at midnight. His granddaughter dismisses the legends, until the night the river speaks to her...",
     language: 'Kannada', region: 'Karnataka',
     tags: ['folklore', 'mythology', 'nature'],
     authenticity: 81, votes: 29, karma: 58,
@@ -65,7 +65,7 @@ const SEED_STORIES = [
   },
   {
     title: "The Warli Painter's Vision",
-    content: "Among the Warli tribe of Maharashtra, painting is prayer. Old Sundari had painted the walls of her village for sixty years, each brushstroke a connection to ancestors who hunted deer in primeval forests. When the developers came, Sundari painted one final mural—a map of everything that would be lost...",
+    content: "Among the Warli tribe of Maharashtra, painting is prayer. Old Sundari had painted the walls of her village for sixty years, each brushstroke a connection to ancestors who hunted deer in primeval forests. When the developers came, Sundari painted one final mural: a map of everything that would be lost...",
     language: 'Marathi', region: 'Maharashtra',
     tags: ['tribal', 'art', 'environment'],
     authenticity: 85, votes: 34, karma: 68,
@@ -105,7 +105,7 @@ const SEED_STORIES = [
   },
   {
     title: "Emperor Ashoka's Peace",
-    content: "In 261 BCE, the forces of the Maurya Empire clashed with the kingdom of Kalinga. Emperor Ashoka, ambitious and relentless, sought to expand his reign over all of India. The battle was fierce and brutal, leaving over a hundred thousand soldiers dead and double that number displaced. Walking across the battlefield of Kalinga the following morning, Ashoka looked upon the silent rivers red with blood, the weeping widows, and the devastated landscape. A sudden, deep sorrow consumed him. 'What have I done?' he lamented. The hollow nature of his victory became clear. In that moment of profound remorse, Ashoka renounced violence and turned to the teachings of Gautama Buddha. He declared a new conquest—Dharmavijaya, the conquest by righteousness. He erected rock edicts and polished stone pillars throughout his empire, preaching peace, religious tolerance, and kindness to all living beings. Ashoka transformed from a ruthless conqueror into a patron of peace, sending emissaries across Asia to share the message of compassion.",
+    content: "In 261 BCE, the forces of the Maurya Empire clashed with the kingdom of Kalinga. Emperor Ashoka, ambitious and relentless, sought to expand his reign over all of India. The battle was fierce and brutal, leaving over a hundred thousand soldiers dead and double that number displaced. Walking across the battlefield of Kalinga the following morning, Ashoka looked upon the silent rivers red with blood, the weeping widows, and the devastated landscape. A sudden, deep sorrow consumed him. 'What have I done?' he lamented. The hollow nature of his victory became clear. In that moment of profound remorse, Ashoka renounced violence and turned to the teachings of Gautama Buddha. He declared a new conquest: Dharmavijaya, the conquest by righteousness. He erected rock edicts and polished stone pillars throughout his empire, preaching peace, religious tolerance, and kindness to all living beings. Ashoka transformed from a ruthless conqueror into a patron of peace, sending emissaries across Asia to share the message of compassion.",
     language: 'English', region: 'Odisha',
     tags: ['history', 'ashoka', 'buddhism', 'ancient-india'],
     authenticity: 96, votes: 42, karma: 84,
@@ -129,7 +129,7 @@ const SEED_STORIES = [
   },
   {
     title: "Sujata's Milk Rice & The Middle Path",
-    content: "During his six years of searching for truth, Prince Siddhartha practiced extreme ascetism, surviving on a single grain of rice a day until he was a walking skeleton, near the point of death. Seeing his fragile state on the banks of the Niranjana river, a village woman named Sujata offered him a golden bowl of fresh, sweet milk rice. Siddhartha accepted it, realizing that self-mortification only weakened the mind, and that the path to wisdom lay in moderation—the 'Middle Path' between extreme denial and indulgence. Nourished and restored, he sat beneath the Bodhi tree that very night and attained full enlightenment, becoming the Buddha. Sujata's quiet gesture of compassion remains an enduring symbol of how a simple act of kindness can change the course of spiritual history.",
+    content: "During his six years of searching for truth, Prince Siddhartha practiced extreme ascetism, surviving on a single grain of rice a day until he was a walking skeleton, near the point of death. Seeing his fragile state on the banks of the Niranjana river, a village woman named Sujata offered him a golden bowl of fresh, sweet milk rice. Siddhartha accepted it, realizing that self-mortification only weakened the mind, and that the path to wisdom lay in moderation, the 'Middle Path' between extreme denial and indulgence. Nourished and restored, he sat beneath the Bodhi tree that very night and attained full enlightenment, becoming the Buddha. Sujata's quiet gesture of compassion remains an enduring symbol of how a simple act of kindness can change the course of spiritual history.",
     language: 'English', region: 'Bodh Gaya',
     tags: ['buddhism', 'wisdom', 'compassion', 'ancient-india'],
     authenticity: 95, votes: 15, karma: 30,

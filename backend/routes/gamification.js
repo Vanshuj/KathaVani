@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getStore } = require('../config/db');
+const { getStore, isMongoMode } = require('../config/db');
 const { authMiddleware } = require('../middleware/auth');
+
+const getUser = () => isMongoMode() ? require('../models/User') : null;
 
 const QUIZZES = [
   {
@@ -49,39 +51,57 @@ router.get('/quizzes/:id', (req, res) => {
 });
 
 // POST /api/gamification/quizzes/:id/submit
-router.post('/quizzes/:id/submit', authMiddleware, (req, res) => {
-  const quiz = QUIZZES.find(q => q.id === req.params.id);
-  if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
+router.post('/quizzes/:id/submit', authMiddleware, async (req, res) => {
+  try {
+    const quiz = QUIZZES.find(q => q.id === req.params.id);
+    if (!quiz) return res.status(404).json({ error: 'Quiz not found' });
 
-  const { answers = [] } = req.body;
-  let score = 0;
-  const results = quiz.questions.map((q, i) => {
-    const correct = answers[i] === q.correct;
-    if (correct) score++;
-    return { question: q.q, yourAnswer: answers[i], correctAnswer: q.correct, correct };
-  });
+    const { answers = [] } = req.body;
+    let score = 0;
+    const results = quiz.questions.map((q, i) => {
+      const correct = answers[i] === q.correct;
+      if (correct) score++;
+      return { question: q.q, yourAnswer: answers[i], correctAnswer: q.correct, correct };
+    });
 
-  const store = getStore();
-  const user = store.users.find(u => u._id === req.user.id);
-  const points = Math.round((score / quiz.questions.length) * 20);
-  if (user) {
-    user.karma = (user.karma || 0) + points;
-    if (score === quiz.questions.length && !user.badges.includes('Quiz Champion')) {
-      user.badges.push('Quiz Champion');
+    const points = Math.round((score / quiz.questions.length) * 20);
+
+    if (isMongoMode()) {
+      const User = getUser();
+      const user = await User.findById(req.user.id);
+      if (user) {
+        user.karma = (user.karma || 0) + points;
+        if (score === quiz.questions.length && !user.badges.includes('Quiz Champion')) {
+          user.badges.push('Quiz Champion');
+        }
+        await user.save();
+      }
+      return res.json({ score, total: quiz.questions.length, points, results, karma: user?.karma });
     }
-  }
 
-  res.json({ score, total: quiz.questions.length, points, results, karma: user?.karma });
+    const store = getStore();
+    const user = store.users.find(u => u._id === req.user.id);
+    if (user) {
+      user.karma = (user.karma || 0) + points;
+      if (score === quiz.questions.length && !user.badges.includes('Quiz Champion')) {
+        user.badges.push('Quiz Champion');
+      }
+    }
+
+    res.json({ score, total: quiz.questions.length, points, results, karma: user?.karma });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // GET /api/gamification/badges
 router.get('/badges', (req, res) => {
   const ALL_BADGES = [
-    { id: 'story-seed', name: 'Story Seed', description: 'Earn 100 karma points', icon: '🌱', requirement: 100 },
-    { id: 'myth-keeper', name: 'Myth Keeper', description: 'Earn 300 karma points', icon: '📜', requirement: 300 },
-    { id: 'cultural-guardian', name: 'Cultural Guardian', description: 'Earn 500 karma points', icon: '🏛️', requirement: 500 },
-    { id: 'elder-storyteller', name: 'Elder Storyteller', description: 'Publish a story to the vault', icon: '🎙️', requirement: 0 },
-    { id: 'quiz-champion', name: 'Quiz Champion', description: 'Score 100% on any quiz', icon: '🏆', requirement: 0 },
+    { id: 'story-seed', name: 'Story Seed', description: 'Earn 100 karma points', icon: 'seedling', requirement: 100 },
+    { id: 'myth-keeper', name: 'Myth Keeper', description: 'Earn 300 karma points', icon: 'scroll', requirement: 300 },
+    { id: 'cultural-guardian', name: 'Cultural Guardian', description: 'Earn 500 karma points', icon: 'landmark', requirement: 500 },
+    { id: 'elder-storyteller', name: 'Elder Storyteller', description: 'Publish a story to the vault', icon: 'microphone', requirement: 0 },
+    { id: 'quiz-champion', name: 'Quiz Champion', description: 'Score 100% on any quiz', icon: 'trophy', requirement: 0 },
   ];
   res.json(ALL_BADGES);
 });

@@ -42,7 +42,7 @@ router.get('/', optionalAuth, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// GET /api/stories/geo/map  — must be BEFORE /:id
+// GET /api/stories/geo/map: must be BEFORE /:id
 router.get('/geo/map', async (_req, res) => {
   try {
     if (isMongoMode()) {

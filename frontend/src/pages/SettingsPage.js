@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faPalette, faBell, faShield, faUniversalAccess, faTrash, faKey, faSave } from '@fortawesome/free-solid-svg-icons';
+import {
+  faUser, faPalette, faBell, faShield, faUniversalAccess, faTrash, faKey,
+  faSave, faCog, faSun, faMoon, faDownload, faUserShield
+} from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { updatePreferences, changePassword, deleteAccount } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
-const LANGUAGES = ['English', 'Hindi', 'Tamil', 'Telugu', 'Marathi', 'Kannada', 'Bengali', 'Gujarati'];
+const LANGUAGES = ['English', 'Hindi', 'Tamil', 'Telugu', 'Bengali', 'Marathi', 'Gujarati', 'Kannada', 'Malayalam', 'Odia', 'Punjabi', 'Assamese'];
 const REGIONS = ['North India', 'South India', 'East India', 'West India', 'Central India', 'Northeast India', 'Pan India'];
 const STORY_TYPES = ['mythology', 'resistance', 'migration', 'folklore', 'tribal', 'history', 'nature', 'family'];
-const THEMES_DISPLAY = [{ id: 'light', label: 'Light', icon: '☀️' }, { id: 'dark', label: 'Dark', icon: '🌙' }];
+const THEMES_DISPLAY = [{ id: 'light', label: 'Light', icon: faSun }, { id: 'dark', label: 'Dark', icon: faMoon }];
 
 export default function SettingsPage() {
   const { user, updateUser, logout } = useAuth();
@@ -21,12 +24,27 @@ export default function SettingsPage() {
   const [pwError, setPwError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (user) {
+      setPrefs({
+        name: user.name || '',
+        language: user.language || 'English',
+        region: user.region || 'Pan India',
+        storyPreferences: user.storyPreferences || [],
+        narrationMode: user.narrationMode || 'voice',
+        notifications: user.notifications ?? true,
+        subtitles: user.subtitles || false
+      });
+    }
+  }, [user]);
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: faUser },
     { id: 'appearance', label: 'Appearance', icon: faPalette },
     { id: 'notifications', label: 'Notifications', icon: faBell },
     { id: 'security', label: 'Security', icon: faShield },
     { id: 'accessibility', label: 'Accessibility', icon: faUniversalAccess },
+    { id: 'privacy', label: 'DPDP Data Rights', icon: faUserShield },
   ];
 
   const savePrefs = async () => {
@@ -66,12 +84,41 @@ export default function SettingsPage() {
     } catch { showNotification('Failed to delete account', 'error'); }
   };
 
+  const handleExportData = () => {
+    const exportPayload = {
+      entity: 'KathaVani Cultural Heritage Foundation',
+      dataPrincipal: {
+        id: user?._id || user?.id,
+        name: user?.name,
+        email: user?.email,
+        language: prefs.language,
+        region: prefs.region,
+        karma: user?.karma || 0,
+        badges: user?.badges || [],
+        preferences: prefs,
+        exportedAt: new Date().toISOString(),
+        statutoryReference: 'Digital Personal Data Protection Act, 2023 (Section 11)'
+      }
+    };
+    const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kathavani_data_export_${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showNotification('Personal data archive exported successfully!', 'success');
+  };
+
   return (
     <div className="fade-in">
-      <h1 style={{ color: 'var(--terracotta)', marginBottom: '0.2rem' }}>⚙️ Settings</h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Customize your KathaVani experience</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.2rem' }}>
+        <FontAwesomeIcon icon={faCog} style={{ color: 'var(--terracotta)', fontSize: '1.6rem' }} />
+        <h1 style={{ color: 'var(--terracotta)', margin: 0 }}>Settings</h1>
+      </div>
+      <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>Customize your preferences and manage your privacy rights</p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.5rem' }}>
         {/* Sidebar */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {tabs.map(t => (
@@ -142,7 +189,7 @@ export default function SettingsPage() {
                       <button key={t.id} onClick={() => { if (theme !== t.id) toggleTheme(); }}
                         className={`btn ${theme === t.id ? 'btn-primary' : 'btn-ghost'}`}
                         style={{ flex: 1, justifyContent: 'center', gap: '0.5rem' }}>
-                        {t.icon} {t.label}
+                        <FontAwesomeIcon icon={t.icon} /> {t.label}
                       </button>
                     ))}
                   </div>
@@ -242,6 +289,55 @@ export default function SettingsPage() {
                 <button onClick={savePrefs} className="btn btn-primary" disabled={saving}>
                   <FontAwesomeIcon icon={faSave} /> {saving ? 'Saving…' : 'Save Accessibility Settings'}
                 </button>
+              </div>
+            </div>
+          )}
+
+          {tab === 'privacy' && (
+            <div>
+              <h2 style={{ marginBottom: '1.25rem', fontSize: '1.2rem', color: 'var(--terracotta)' }}>
+                <FontAwesomeIcon icon={faUserShield} style={{ marginRight: 8 }} />
+                Your DPDP Act 2023 Data Rights
+              </h2>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1.5rem', lineHeight: 1.6 }}>
+                In compliance with India's Digital Personal Data Protection Act, 2023, you have full ownership and rights over your personal data held by KathaVani.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: 540 }}>
+                {/* Data Summary Card */}
+                <div style={{ padding: '1rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
+                  <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.95rem' }}>Personal Data Summary (Section 11)</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0.4rem', fontSize: '0.86rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Registered Name:</span><strong>{user?.name}</strong>
+                    <span style={{ color: 'var(--text-muted)' }}>Email Address:</span><strong>{user?.email}</strong>
+                    <span style={{ color: 'var(--text-muted)' }}>Preferred Dialect:</span><span>{prefs.language}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Karma Balance:</span><span>{user?.karma || 0} points</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Data Collection:</span><span>Strictly Necessary & Functional Only</span>
+                  </div>
+                </div>
+
+                {/* Export Data */}
+                <div style={{ padding: '1rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
+                  <h4 style={{ margin: '0 0 0.4rem', fontSize: '0.95rem' }}>Right to Data Portability (Section 11)</h4>
+                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
+                    Download a copy of your personal data archive, including profile settings, badges, and story metadata in machine-readable JSON format.
+                  </p>
+                  <button onClick={handleExportData} className="btn btn-secondary btn-sm">
+                    <FontAwesomeIcon icon={faDownload} /> Download My Personal Data Archive
+                  </button>
+                </div>
+
+                {/* Grievance Redressal */}
+                <div style={{ padding: '1rem', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)' }}>
+                  <h4 style={{ margin: '0 0 0.4rem', fontSize: '0.95rem' }}>Grievance Redressal (Section 13)</h4>
+                  <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: '0 0 0.5rem' }}>
+                    Have concerns or wish to submit a data rectification request? Contact our statutory Grievance Officer:
+                  </p>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                    Email: <a href="mailto:grievance@kathavani.in" style={{ textDecoration: 'underline' }}>grievance@kathavani.in</a><br />
+                    Review policy: <Link to="/privacy" style={{ textDecoration: 'underline' }}>Read DPDP Privacy Policy</Link>
+                  </div>
+                </div>
               </div>
             </div>
           )}

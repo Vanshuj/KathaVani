@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faStop, faHeart, faArrowLeft, faMapMarkerAlt, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlay, faStop, faHeart, faArrowLeft, faMapMarkerAlt, faCalendar,
+  faLanguage, faMicrophone, faVideo, faMusic, faCodeBranch, faWaveSquare, faShieldAlt
+} from '@fortawesome/free-solid-svg-icons';
 import { getStory, voteStory, addKarma } from '../services/api';
 import { useSpeech } from '../hooks/useSpeech';
 import { useAuth } from '../context/AuthContext';
@@ -20,7 +23,7 @@ export default function StoryDetail() {
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [translatedContent, setTranslatedContent] = useState('');
   const [translating, setTranslating] = useState(false);
-  const [translationCache, setTranslationCache] = useState({});
+  const translationCacheRef = useRef({});
   const { speak, stopSpeaking, isSpeaking, systemVoices } = useSpeech();
   const { user, updateUser } = useAuth();
   const { showNotification } = useApp();
@@ -39,7 +42,7 @@ export default function StoryDetail() {
   useEffect(() => {
     if (!story) return;
 
-    const sourceLang = LANGUAGE_TO_CODE[story.language] || 'en';
+    const sourceLang = LANGUAGE_TO_CODE[story.language] || (story.language && story.language.length === 2 ? story.language.toLowerCase() : 'en');
     const targetLang = selectedLang.split('-')[0];
 
     if (sourceLang === targetLang) {
@@ -50,9 +53,9 @@ export default function StoryDetail() {
     }
 
     const cacheKey = `${story._id}_${targetLang}`;
-    if (translationCache[cacheKey]) {
-      setTranslatedTitle(translationCache[cacheKey].title);
-      setTranslatedContent(translationCache[cacheKey].content);
+    if (translationCacheRef.current[cacheKey]) {
+      setTranslatedTitle(translationCacheRef.current[cacheKey].title);
+      setTranslatedContent(translationCacheRef.current[cacheKey].content);
       setTranslating(false);
       return;
     }
@@ -63,12 +66,9 @@ export default function StoryDetail() {
     translateStory(story.title, story.content, sourceLang, targetLang)
       .then(({ title, content }) => {
         if (!active) return;
+        translationCacheRef.current[cacheKey] = { title, content };
         setTranslatedTitle(title);
         setTranslatedContent(content);
-        setTranslationCache(prev => ({
-          ...prev,
-          [cacheKey]: { title, content }
-        }));
         setTranslating(false);
       })
       .catch((err) => {
@@ -77,13 +77,13 @@ export default function StoryDetail() {
         setTranslatedTitle(story.title);
         setTranslatedContent(story.content);
         setTranslating(false);
-        showNotification('Translation service failed, displaying original story', 'warning');
+        showNotification('Translation service unavailable, displaying original narrative', 'warning');
       });
 
     return () => {
       active = false;
     };
-  }, [story, selectedLang, translationCache, showNotification]);
+  }, [story, selectedLang, showNotification]);
 
   const handleNarrate = () => {
     if (isSpeaking) { stopSpeaking(); return; }
@@ -100,11 +100,11 @@ export default function StoryDetail() {
   };
 
   const handleVote = async () => {
-    if (!user) { showNotification('Sign in to vote', 'warning'); return; }
+    if (!user) { showNotification('Sign in to vote for stories', 'warning'); return; }
     try {
       const res = await voteStory(id);
       setStory(prev => ({ ...prev, votes: res.votes, authenticity: res.authenticity }));
-      showNotification('+5 karma for voting! ⭐', 'success');
+      showNotification('+5 karma points for voting!', 'success');
     } catch (err) { showNotification(err.error || 'Already voted', 'warning'); }
   };
 
@@ -130,14 +130,18 @@ export default function StoryDetail() {
           <span>by <strong style={{ color: 'var(--text-secondary)' }}>{story.authorName}</strong></span>
           {story.region && <span><FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: 4 }} />{story.region}</span>}
           <span><FontAwesomeIcon icon={faCalendar} style={{ marginRight: 4 }} />{new Date(story.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-          <span>🗣️ {story.language}</span>
+          <span><FontAwesomeIcon icon={faLanguage} style={{ marginRight: 4 }} />{story.language}</span>
         </div>
       </div>
 
       {/* TTS Controls */}
       <div className="card" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-        <select value={selectedLang} onChange={e => { setSelectedLang(e.target.value); setSelectedVoiceName(''); }} style={{ width: 'auto', fontSize: '0.88rem', padding: '0.4rem 0.7rem' }}>
-          {LANGUAGES.map(l => <option key={l.code} value={l.code}>{l.label} — {l.name}</option>)}
+        <select value={selectedLang} onChange={e => { setSelectedLang(e.target.value); setSelectedVoiceName(''); }} style={{ width: 'auto', fontSize: '0.88rem', padding: '0.4rem 0.7rem', background: 'var(--bg-elevated)', color: 'var(--text-primary)' }}>
+          {LANGUAGES.map(l => (
+            <option key={l.code} value={l.code} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>
+              {l.name} ({l.label})
+            </option>
+          ))}
         </select>
         
         {systemVoices.filter(v => v.lang === selectedLang || v.lang.startsWith(selectedLang.split('-')[0])).length > 0 && (
@@ -153,20 +157,20 @@ export default function StoryDetail() {
         )}
 
         <button onClick={handleNarrate} className={`btn ${isSpeaking ? 'btn-primary' : 'btn-jade'}`}>
-          <FontAwesomeIcon icon={isSpeaking ? faStop : faPlay} />
-          {isSpeaking ? 'Stop Narration' : '🎙️ Narrate Story'}
+          <FontAwesomeIcon icon={isSpeaking ? faStop : faMicrophone} />
+          {isSpeaking ? 'Stop Narration' : 'Narrate Story'}
         </button>
         <button onClick={handleVote} className="btn btn-ghost">
-          <FontAwesomeIcon icon={faHeart} style={{ color: 'var(--vermillion)' }} /> {story.votes} votes
+          <FontAwesomeIcon icon={faHeart} style={{ color: 'var(--vermillion)' }} /> {story.votes} community votes
         </button>
       </div>
 
       {/* Emotion-aware voice synthesis display */}
       {sentiment && (
         <div className="card" style={{ marginBottom: '1.5rem', background: 'rgba(180,95,43,0.06)', border: '1px solid rgba(180,95,43,0.15)', display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.8rem 1.25rem' }}>
-          <span style={{ fontSize: '1.4rem' }}>🎭</span>
+          <FontAwesomeIcon icon={faWaveSquare} style={{ color: 'var(--terracotta)', fontSize: '1.3rem' }} />
           <div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--terracotta)' }}>Emotion-Aware TTS Active ({sentiment.mood})</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--terracotta)' }}>Emotion-Aware Voice Synthesis ({sentiment.mood})</div>
             <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>{sentiment.narrationStyle}</div>
           </div>
         </div>
@@ -176,7 +180,7 @@ export default function StoryDetail() {
       {story.videoUrl && (
         <div className="card" style={{ marginBottom: '1.5rem', padding: '1.25rem', textAlign: 'center', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
           <h3 style={{ marginBottom: '0.75rem', fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center', color: 'var(--terracotta)' }}>
-            📹 Watch Video Story
+            <FontAwesomeIcon icon={faVideo} /> Watch Video Story
           </h3>
           <div style={{ background: '#000', borderRadius: 'var(--radius-md)', overflow: 'hidden', maxWidth: '100%', border: '1px solid var(--border)' }}>
             <video src={story.videoUrl} controls style={{ width: '100%', maxHeight: '450px', display: 'block', margin: '0 auto', objectFit: 'contain' }} />
@@ -187,7 +191,9 @@ export default function StoryDetail() {
       {/* Audio Player */}
       {story.audioUrl && (
         <div className="card" style={{ marginBottom: '1.5rem', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
-          <strong style={{ fontSize: '0.95rem', color: 'var(--terracotta)' }}>🎵 Listen to Original Audio:</strong>
+          <strong style={{ fontSize: '0.95rem', color: 'var(--terracotta)' }}>
+            <FontAwesomeIcon icon={faMusic} style={{ marginRight: 6 }} />Listen to Original Audio:
+          </strong>
           <audio src={story.audioUrl} controls style={{ flex: 1, height: '36px' }} />
         </div>
       )}
@@ -198,7 +204,8 @@ export default function StoryDetail() {
           <div style={{
             position: 'absolute',
             top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(255, 255, 255, 0.75)',
+            background: 'var(--bg-elevated)',
+            opacity: 0.92,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
@@ -207,7 +214,7 @@ export default function StoryDetail() {
             borderRadius: 'var(--radius-md)'
           }}>
             <div className="spinner" style={{ marginBottom: '0.5rem' }} />
-            <span style={{ fontSize: '0.9rem', color: 'var(--terracotta)', fontWeight: 600 }}>Translating story... 🌀</span>
+            <span style={{ fontSize: '0.9rem', color: 'var(--terracotta)', fontWeight: 600 }}>Translating story...</span>
           </div>
         )}
         <div style={{
@@ -223,6 +230,18 @@ export default function StoryDetail() {
         </div>
       </div>
 
+      {/* Copyright Licensing Attribution Box */}
+      <div className="card" style={{ marginBottom: '1.5rem', background: 'var(--bg)', border: '1px solid var(--border)', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+          <FontAwesomeIcon icon={faShieldAlt} style={{ color: 'var(--terracotta)' }} />
+          Archival Licensing & Attribution Notice
+        </div>
+        <p style={{ margin: 0, lineHeight: 1.6 }}>
+          © {story.authorName} &middot; KathaVani Cultural Heritage Archive. This narrative contribution is licensed under{' '}
+          <strong>Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</strong>. Traditional custodianship remains with the originating communities and storyteller.
+        </p>
+      </div>
+
       {/* Authenticity */}
       <div style={{ marginBottom: '1.5rem' }}>
         <AuthenticityMeter content={story.content} tags={story.tags} />
@@ -231,7 +250,10 @@ export default function StoryDetail() {
       {/* Node graph preview */}
       {story.nodeGraph?.length > 0 && (
         <div className="card" style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>🌿 This story has {story.nodeGraph.length} branching nodes</h3>
+          <h3 style={{ marginBottom: '0.5rem', fontSize: '1rem' }}>
+            <FontAwesomeIcon icon={faCodeBranch} style={{ marginRight: 6, color: 'var(--terracotta)' }} />
+            This story has {story.nodeGraph.length} branching narrative nodes
+          </h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>The storyteller explored multiple paths before settling on this narrative.</p>
         </div>
       )}
@@ -239,10 +261,13 @@ export default function StoryDetail() {
       {/* Location map */}
       {story.lat && story.lng && (
         <div className="card" style={{ marginBottom: '1.5rem' }}>
-          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>📍 Story Origin: {story.region}</h3>
+          <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>
+            <FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: 6, color: 'var(--terracotta)' }} />
+            Story Origin: {story.region}
+          </h3>
           <div style={{ height: 200, borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
             <iframe
-              title="Story Location"
+              title={`Story location map for ${story.region}`}
               src={`https://www.openstreetmap.org/export/embed.html?bbox=${story.lng - 2},${story.lat - 2},${story.lng + 2},${story.lat + 2}&layer=mapnik&marker=${story.lat},${story.lng}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
             />

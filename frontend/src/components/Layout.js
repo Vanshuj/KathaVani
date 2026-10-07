@@ -3,10 +3,13 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBook, faMicrophone, faVault, faTrophy, faCog, faHome,
-  faSun, faMoon, faWifi, faBars, faTimes, faSignInAlt, faSignOutAlt, faUser
+  faSun, faMoon, faWifi, faBars, faTimes, faSignInAlt, faSignOutAlt, faUser, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import CookieConsent from './CookieConsent';
+import Background3D from './Background3D';
+import logo from '../assets/logo.png';
 
 export default function Layout() {
   const { theme, toggleTheme, isOnline, notification } = useApp();
@@ -24,10 +27,18 @@ export default function Layout() {
   ];
 
   return (
-    <div className={`app-shell cultural-bg`} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-shell cultural-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {/* 3D Animated Background Effect */}
+      <Background3D />
+
+      {/* Skip to main content for accessibility */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+
       {/* Navbar */}
       <nav style={{
-        background: 'var(--bg-card)',
+        background: 'var(--nav-bg)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         borderBottom: '1px solid var(--border)',
         padding: '0 1.5rem',
         position: 'sticky', top: 0, zIndex: 100,
@@ -36,8 +47,17 @@ export default function Layout() {
         boxShadow: 'var(--shadow-sm)'
       }}>
         {/* Logo */}
-        <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none' }}>
-          <span className="diya-glow" style={{ fontSize: '1.5rem' }}>🪔</span>
+        <NavLink to="/" aria-label="KathaVani Cultural Hub home" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+          <img
+            src={logo}
+            alt="KathaVani emblem: a traditional lamp signifying enduring stories"
+            style={{
+              width: 40,
+              height: 40,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 2px 6px rgba(180,95,43,0.28))'
+            }}
+          />
           <div>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--terracotta)' }}>KathaVani</span>
             <span style={{ display: 'block', fontSize: '0.65rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', marginTop: -4 }}>CULTURAL STORYTELLING HUB</span>
@@ -73,12 +93,12 @@ export default function Layout() {
         {/* Right controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           {/* Online indicator */}
-          <span title={isOnline ? 'Online' : 'Offline'} style={{ color: isOnline ? 'var(--jade)' : 'var(--dust)' }}>
+          <span title={isOnline ? 'Online' : 'Offline'} aria-label={isOnline ? 'Network status: Online' : 'Network status: Offline'} style={{ color: isOnline ? 'var(--jade)' : 'var(--dust)' }}>
             <FontAwesomeIcon icon={faWifi} size="sm" style={{ opacity: isOnline ? 1 : 0.5 }} />
           </span>
 
           {/* Theme toggle */}
-          <button onClick={toggleTheme} className="btn btn-ghost btn-sm" title="Toggle theme">
+          <button onClick={toggleTheme} className="btn btn-ghost btn-sm" aria-label="Toggle dark and light color theme" title="Toggle theme">
             <FontAwesomeIcon icon={theme === 'light' ? faMoon : faSun} />
           </button>
 
@@ -89,8 +109,11 @@ export default function Layout() {
                 <FontAwesomeIcon icon={faUser} size="sm" style={{ marginRight: 4 }} />
                 {user.name.split(' ')[0]}
               </span>
-              <span className="karma-display">⭐ {user.karma || 0}</span>
-              <button onClick={() => { logout(); navigate('/'); }} className="btn btn-ghost btn-sm">
+              <span className="karma-display">
+                <FontAwesomeIcon icon={faStar} size="xs" style={{ marginRight: 3 }} />
+                {user.karma || 0}
+              </span>
+              <button onClick={() => { logout(); navigate('/'); }} className="btn btn-ghost btn-sm" aria-label="Sign out of account" title="Sign Out">
                 <FontAwesomeIcon icon={faSignOutAlt} />
               </button>
             </div>
@@ -101,7 +124,7 @@ export default function Layout() {
           )}
 
           {/* Mobile menu */}
-          <button onClick={() => setMenuOpen(!menuOpen)} className="btn btn-ghost btn-sm mobile-menu-btn">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="btn btn-ghost btn-sm mobile-menu-btn" aria-label="Toggle navigation menu">
             <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
           </button>
         </div>
@@ -133,7 +156,7 @@ export default function Layout() {
       )}
 
       {/* Main content */}
-      <main style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: 1280, margin: '0 auto', width: '100%' }}>
+      <main id="main-content" tabIndex="-1" style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: 1280, margin: '0 auto', width: '100%', outline: 'none' }}>
         <Outlet />
       </main>
 
@@ -154,13 +177,26 @@ export default function Layout() {
         }}>
           {/* Column 1: Brand & Description */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className="diya-glow" style={{ fontSize: '1.4rem' }}>🪔</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <img
+                src={logo}
+                alt="KathaVani cultural seal"
+                style={{
+                  width: 34,
+                  height: 34,
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 2px 4px rgba(180,95,43,0.22))'
+                }}
+              />
               <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--terracotta)' }}>KathaVani</span>
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.6, margin: 0 }}>
-              Preserving India's rich oral traditions — from ancient myths to living history — through voice, map, and community collaboration.
+              Preserving India's rich oral traditions, from ancient myths to living history, through voice, map, and community collaboration.
             </p>
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Registered Entity: KathaVani Cultural Heritage Foundation<br />
+              Location: New Delhi 110001, India
+            </div>
           </div>
 
           {/* Column 2: Quick Links */}
@@ -189,12 +225,13 @@ export default function Layout() {
 
           {/* Column 4: Contact & Preservation */}
           <div>
-            <h4 style={{ fontFamily: 'var(--font-display)', color: 'var(--terracotta)', marginBottom: '0.75rem', fontSize: '0.95rem' }}>Preservation Hub</h4>
+            <h4 style={{ fontFamily: 'var(--font-display)', color: 'var(--terracotta)', marginBottom: '0.75rem', fontSize: '0.95rem' }}>Preservation & Compliance</h4>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.6, margin: '0 0 0.5rem' }}>
-              Join hands in preserving India's cultural heritage. Submit audio recordings, transcribe folk tales, and become a cultural archivist.
+              Join hands in preserving India's living heritage. Submit audio recordings, transcribe folk tales, and become a cultural archivist.
             </p>
-            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-              📍 Made with ❤️ in India
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+              DPDP Act Compliance Desk: <a href="mailto:privacy@kathavani.in" style={{ textDecoration: 'underline' }}>privacy@kathavani.in</a><br />
+              Grievance Officer: <a href="mailto:grievance@kathavani.in" style={{ textDecoration: 'underline' }}>grievance@kathavani.in</a>
             </div>
           </div>
         </div>
@@ -214,18 +251,23 @@ export default function Layout() {
           color: 'var(--text-muted)'
         }}>
           <div>
-            &copy; {new Date().getFullYear()} KathaVani. All rights reserved.
+            &copy; {new Date().getFullYear()} KathaVani Cultural Heritage Foundation. All community contributions licensed under CC BY-NC 4.0.
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
-            <a href="#privacy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy</a>
-            <a href="#terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms of Service</a>
+          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+            <NavLink to="/privacy" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy Policy (DPDP)</NavLink>
+            <NavLink to="/terms" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Terms & Conditions</NavLink>
+            <NavLink to="/cookies" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Cookie Policy</NavLink>
+            <NavLink to="/refund" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Refund Policy</NavLink>
           </div>
         </div>
       </footer>
 
+      {/* Cookie Consent banner */}
+      <CookieConsent />
+
       {/* Toast notification */}
       {notification && (
-        <div className={`toast toast-${notification.type}`}>
+        <div className={`toast toast-${notification.type}`} role="status" aria-live="polite">
           {notification.message}
         </div>
       )}

@@ -47,7 +47,7 @@ export default function NodeTree({ nodes, activeNodeId, onSelectNode }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
         <FontAwesomeIcon icon={faCodeBranch} style={{ color: 'var(--terracotta)' }} />
         <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-          Story Tree — {nodes.length} node{nodes.length !== 1 ? 's' : ''}
+          Story Tree: {nodes.length} node{nodes.length !== 1 ? 's' : ''}
         </span>
       </div>
       {roots.map(root => renderNode(root, 0))}

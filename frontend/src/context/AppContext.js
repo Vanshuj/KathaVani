@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const AppContext = createContext(null);
 
@@ -32,10 +32,10 @@ export const AppProvider = ({ children }) => {
     return () => { window.removeEventListener('online', onOnline); window.removeEventListener('offline', onOffline); };
   }, []);
 
-  const showNotification = (message, type = 'info') => {
+  const showNotification = useCallback((message, type = 'info') => {
     setNotification({ message, type, id: Date.now() });
     setTimeout(() => setNotification(null), 4000);
-  };
+  }, []);
 
   const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
 

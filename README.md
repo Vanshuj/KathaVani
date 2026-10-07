@@ -24,7 +24,7 @@ KathaVani is a full-stack web application for discovering, sharing, and preservi
 
 ### Core Features
 - **🎙️ Storyteller Workshop** — Write or dictate stories with Web Speech API (STT), get AI-powered node suggestions, and build branching narratives with a visual node tree (up to 20+ nodes, backtracking supported)
-- **📖 Listener Hub** — Browse all community stories, play TTS narration in 6 languages (English, Hindi, Tamil, Telugu, Marathi, Kannada), vote on stories
+- **📖 Listener Hub** — Browse all community stories, translate and play TTS narration in 12 Indian languages (English, Hindi, Tamil, Telugu, Bengali, Marathi, Gujarati, Kannada, Malayalam, Odia, Punjabi, Assamese), vote on stories
 - **🗺️ Geo-Tagged Story Trails** — Interactive Leaflet map showing story origins across India
 - **🏺 Community Vault** — Moderated archive with mythology, resistance, migration, and folklore tags
 - **📥 Offline Story Packs** — Download story packs to IndexedDB (via localForage), sync back when online

@@ -137,11 +137,41 @@ export function useSpeech() {
         const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(t)}&tl=${targetLang}&client=tw-ob`;
         audio.src = url;
         audio.play().catch(err => {
-          console.warn("Google TTS fallback playback failed, skipping chunk:", err);
-          currentChunk++;
-          playNext();
+          console.warn("Google TTS fallback audio playback failed, falling back to Web Speech:", err);
+          if (synthRef.current) {
+            const fallbackUtterance = new SpeechSynthesisUtterance(t);
+            fallbackUtterance.lang = langCode;
+            fallbackUtterance.onend = () => {
+              currentChunk++;
+              playNext();
+            };
+            fallbackUtterance.onerror = () => {
+              currentChunk++;
+              playNext();
+            };
+            synthRef.current.speak(fallbackUtterance);
+          } else {
+            currentChunk++;
+            playNext();
+          }
         });
         currentChunk++;
+      };
+
+      audio.onerror = () => {
+        console.warn("Google TTS audio stream load error, delegating to Web Speech API");
+        if (synthRef.current) {
+          const fallbackUtterance = new SpeechSynthesisUtterance(text);
+          fallbackUtterance.lang = langCode;
+          fallbackUtterance.onend = () => {
+            setIsSpeaking(false);
+            onEnd?.();
+          };
+          fallbackUtterance.onerror = () => setIsSpeaking(false);
+          synthRef.current.speak(fallbackUtterance);
+        } else {
+          setIsSpeaking(false);
+        }
       };
 
       audio.onended = playNext;

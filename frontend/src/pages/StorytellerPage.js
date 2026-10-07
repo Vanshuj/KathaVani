@@ -3,19 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMicrophone, faMicrophoneSlash, faLightbulb, faCodeBranch,
-  faUpload, faWandMagicSparkles, faHistory, faSave, faRandom
+  faUpload, faWandMagicSparkles, faHistory, faSave, faRandom,
+  faAward, faMusic, faCheckCircle, faChartBar, faVideo, faFilm, faShieldAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import NodeTree from '../components/NodeTree';
 import WhatIfModal from '../components/WhatIfModal';
 import AuthenticityMeter from '../components/AuthenticityMeter';
-import { generateNodeSuggestions, analyzeSentiment, SOUNDSCAPES } from '../services/mockAI';
+import { generateNodeSuggestions, analyzeSentiment, SOUNDSCAPES, generateStorySprout } from '../services/mockAI';
 import { createStory, saveNodeGraph, addKarma, uploadFile } from '../services/api';
 
 const TAG_OPTIONS = ['mythology', 'resistance', 'migration', 'folklore', 'tribal', 'history', 'nature', 'family'];
 const REGIONS = ['North India', 'South India', 'East India', 'West India', 'Central India', 'Northeast India', 'Pan India'];
-const LANGUAGES_LIST = ['English', 'Hindi', 'Tamil', 'Telugu', 'Marathi', 'Kannada', 'Bengali', 'Gujarati'];
+const LANGUAGES_LIST = ['English', 'Hindi', 'Tamil', 'Telugu', 'Bengali', 'Marathi', 'Gujarati', 'Kannada', 'Malayalam', 'Odia', 'Punjabi', 'Assamese'];
 
 let nodeIdCounter = 1;
 
@@ -43,6 +44,7 @@ export default function StorytellerPage() {
   const [videoUrl, setVideoUrl] = useState(null);
   const [audioUrl, setAudioUrl] = useState(null);
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+  const [contentConsent, setContentConsent] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const baseContentRef = useRef('');
@@ -69,7 +71,7 @@ export default function StorytellerPage() {
     setActiveNodeId(id);
     setContent(newNode.content);
     setShowSuggestions(false);
-    showNotification('Node added to story tree!', 'success');
+    showNotification('Node added to story tree.', 'success');
   };
 
   const selectNode = (node) => {
@@ -83,6 +85,15 @@ export default function StorytellerPage() {
   };
 
   const publishStory = async () => {
+    if (!user) {
+      showNotification('Please sign in or create an account to publish stories', 'warning');
+      navigate('/auth');
+      return;
+    }
+    if (!contentConsent) {
+      showNotification('Please confirm cultural authenticity and CC BY-NC 4.0 licensing consent before publishing', 'warning');
+      return;
+    }
     if (!title.trim() || (!content.trim() && !audioUrl && !videoUrl)) { showNotification('Title and either content, audio, or video are required', 'warning'); return; }
     setPublishing(true);
     try {
@@ -91,7 +102,7 @@ export default function StorytellerPage() {
       const karmaResult = await addKarma(20);
       updateUser({ karma: karmaResult.karma, badges: karmaResult.badges });
       setPublishedId(story._id);
-      showNotification('Story published to Community Vault! +20 karma ⭐', 'success');
+      showNotification('Story published to Community Vault! +20 Karma points', 'success');
     } catch (err) {
       showNotification(err.error || 'Failed to publish', 'error');
     } finally {
@@ -137,19 +148,26 @@ export default function StorytellerPage() {
   };
 
   const sproutStory = () => {
-    const { generateStorySprout } = require('../services/mockAI');
     setContent(generateStorySprout());
-    showNotification('Story Sprout generated! 🌱', 'success');
+    showNotification('Story seed prompt generated successfully.', 'success');
   };
 
   return (
     <div className="fade-in">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ color: 'var(--terracotta)', marginBottom: '0.2rem' }}>🎙️ Storyteller Workshop</h1>
-          <p style={{ color: 'var(--text-muted)', margin: 0 }}>Craft, branch, and publish your story to the vault</p>
+          <h1 style={{ color: 'var(--terracotta)', marginBottom: '0.2rem' }}>
+            <FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 10 }} />
+            Storyteller Workshop
+          </h1>
+          <p style={{ color: 'var(--text-muted)', margin: 0 }}>Craft, branch, and publish oral and written traditions to the vault</p>
         </div>
-        {user && <span className="karma-display">⭐ {user.karma || 0} karma</span>}
+        {user && (
+          <span className="karma-display">
+            <FontAwesomeIcon icon={faAward} style={{ marginRight: 6, color: 'var(--gold)' }} />
+            {user.karma || 0} Karma
+          </span>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem' }}>
@@ -159,18 +177,18 @@ export default function StorytellerPage() {
           <div className="card">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label>Story Title</label>
-                <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Give your story a resonant title…" />
+                <label htmlFor="story-title">Story Title</label>
+                <input id="story-title" value={title} onChange={e => setTitle(e.target.value)} placeholder="Give your story a resonant title…" />
               </div>
               <div>
-                <label>Language</label>
-                <select value={language} onChange={e => setLanguage(e.target.value)}>
+                <label htmlFor="story-language">Language</label>
+                <select id="story-language" value={language} onChange={e => setLanguage(e.target.value)}>
                   {LANGUAGES_LIST.map(l => <option key={l}>{l}</option>)}
                 </select>
               </div>
               <div>
-                <label>Region</label>
-                <select value={region} onChange={e => setRegion(e.target.value)}>
+                <label htmlFor="story-region">Region</label>
+                <select id="story-region" value={region} onChange={e => setRegion(e.target.value)}>
                   {REGIONS.map(r => <option key={r}>{r}</option>)}
                 </select>
               </div>
@@ -222,27 +240,29 @@ export default function StorytellerPage() {
                 <FontAwesomeIcon icon={faUpload} /> Upload your video
               </button>
             </div>
+            <label htmlFor="story-content" className="sr-only">Story Narrative</label>
             <textarea
+              id="story-content"
               ref={textareaRef}
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder="Begin your story here… or use 'Dictate' to speak it into existence.
+              placeholder="Begin your story here… or use 'Record Audio' to record oral traditions.
 
-You can write about ancient kingdoms, forgotten migrations, tribal wisdom, or the stories your grandmother told you on rainy evenings.
+You can write about ancient kingdoms, forgotten migrations, tribal wisdom, or oral history passed down through generations.
 
 Click 'Suggest Nodes' when you need inspiration for what happens next."
               style={{ width: '100%', minHeight: 360, padding: '1.25rem', border: 'none', resize: 'vertical', fontFamily: 'var(--font-body)', fontSize: 'var(--base-font-size)', lineHeight: 1.8, background: 'transparent', color: 'var(--text-primary)' }}
             />
             {sentiment_data && (
               <div style={{ padding: '0.6rem 1rem', borderTop: '1px solid var(--border)', background: 'var(--bg)', display: 'flex', gap: '1rem', fontSize: '0.82rem', color: 'var(--text-muted)', flexWrap: 'wrap' }}>
-                <span>🎭 Mood: <strong style={{ color: 'var(--text-primary)' }}>{sentiment_data.mood}</strong></span>
-                <span>🎙️ {sentiment_data.narrationStyle}</span>
+                <span>Mood: <strong style={{ color: 'var(--text-primary)' }}>{sentiment_data.mood}</strong></span>
+                <span><FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 4 }} /> {sentiment_data.narrationStyle}</span>
                 <span style={{ marginLeft: 'auto' }}>{content.length} chars · ~{Math.ceil(content.split(' ').length / 200)} min read</span>
               </div>
             )}
             {audioUrl && (
               <div style={{ padding: '0.6rem 1rem', borderTop: '1px solid var(--border)', background: 'var(--bg)', display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>🎵 Attached Audio:</span>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}><FontAwesomeIcon icon={faMusic} style={{ marginRight: 6 }} />Attached Audio:</span>
                 <audio src={audioUrl} controls style={{ height: '30px' }} />
                 <button onClick={() => setAudioUrl(null)} className="btn btn-ghost btn-sm" style={{ color: 'var(--vermillion)', marginLeft: 'auto' }}>Remove</button>
               </div>
@@ -254,7 +274,7 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
             <div className="card slide-in">
               <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
                 <h3 style={{ margin: 0, fontSize: '1rem' }}><FontAwesomeIcon icon={faLightbulb} style={{ color: 'var(--gold)', marginRight: 6 }} />Continue the Story…</h3>
-                <button onClick={() => setShowSuggestions(false)} className="btn btn-ghost btn-sm">✕</button>
+                <button onClick={() => setShowSuggestions(false)} className="btn btn-ghost btn-sm" aria-label="Close suggestions">✕</button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {suggestions.map((s, i) => (
@@ -283,23 +303,47 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
           <div className="card" style={{ background: 'linear-gradient(135deg, rgba(180,95,43,0.08), rgba(201,149,42,0.08))' }}>
             {publishedId ? (
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎉</div>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ fontSize: '2.5rem', color: 'var(--jade)' }} />
+                </div>
                 <h3>Story Published!</h3>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Your story is now in the Community Vault</p>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Your story is now archived in the Community Vault</p>
                 <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
                   <button onClick={() => navigate(`/stories/${publishedId}`)} className="btn btn-primary">View Story</button>
-                  <button onClick={() => { setTitle(''); setContent(''); setNodes([]); setPublishedId(null); setSelectedTags([]); }} className="btn btn-ghost">Write Another</button>
+                  <button onClick={() => { setTitle(''); setContent(''); setNodes([]); setPublishedId(null); setSelectedTags([]); setContentConsent(false); }} className="btn btn-ghost">Write Another</button>
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                <div style={{ flex: 1 }}>
+              <div>
+                <div style={{ marginBottom: '0.75rem' }}>
                   <h3 style={{ margin: '0 0 0.25rem' }}>Ready to Publish?</h3>
-                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Share your story with the community and earn karma points</p>
+                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Contribute your story to the community archive and earn Karma points</p>
                 </div>
-                <button onClick={publishStory} className="btn btn-primary btn-lg" disabled={publishing || !title.trim() || (!content.trim() && !audioUrl && !videoUrl)}>
-                  <FontAwesomeIcon icon={faUpload} /> {publishing ? 'Publishing…' : 'Publish to Vault'}
-                </button>
+
+                <div style={{ margin: '0.75rem 0 1rem', padding: '0.75rem 1rem', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                  <label htmlFor="content-licensing-consent" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', fontSize: '0.85rem', cursor: 'pointer', margin: 0, color: 'var(--text-secondary)' }}>
+                    <input 
+                      type="checkbox" 
+                      id="content-licensing-consent"
+                      checked={contentConsent} 
+                      onChange={e => setContentConsent(e.target.checked)} 
+                      style={{ marginTop: '0.2rem' }}
+                    />
+                    <span>
+                      I verify this cultural narrative is respectful, authentic, and free of proprietary or sacred privacy infringements. I license this contribution under <strong>Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</strong> as per KathaVani terms.
+                    </span>
+                  </label>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button 
+                    onClick={publishStory} 
+                    className="btn btn-primary btn-lg" 
+                    disabled={publishing || !contentConsent || !title.trim() || (!content.trim() && !audioUrl && !videoUrl)}
+                  >
+                    <FontAwesomeIcon icon={faUpload} /> {publishing ? 'Publishing…' : 'Publish to Vault'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -312,8 +356,12 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
 
           {/* Soundscape */}
           <div className="card card-interactive">
-            <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>🎵 Cultural Soundscape</h3>
-            <select value={soundscape} onChange={e => setSoundscape(e.target.value)} style={{ marginBottom: '0.5rem' }}>
+            <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>
+              <FontAwesomeIcon icon={faMusic} style={{ marginRight: 6, color: 'var(--terracotta)' }} />
+              Cultural Soundscape
+            </h3>
+            <label htmlFor="story-soundscape" className="sr-only">Cultural Soundscape</label>
+            <select id="story-soundscape" value={soundscape} onChange={e => setSoundscape(e.target.value)} style={{ marginBottom: '0.5rem' }}>
               <option value="">Choose ambience…</option>
               {SOUNDSCAPES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
             </select>
@@ -326,7 +374,10 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
 
           {/* Story stats */}
           <div className="card card-interactive">
-            <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>📊 Story Stats</h3>
+            <h3 style={{ marginBottom: '0.75rem', fontSize: '1rem' }}>
+              <FontAwesomeIcon icon={faChartBar} style={{ marginRight: 6, color: 'var(--terracotta)' }} />
+              Story Statistics
+            </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.88rem' }}>
               <div className="flex-between"><span style={{ color: 'var(--text-muted)' }}>Words</span><strong>{content.split(/\s+/).filter(Boolean).length}</strong></div>
               <div className="flex-between"><span style={{ color: 'var(--text-muted)' }}>Characters</span><strong>{content.length}</strong></div>
@@ -337,9 +388,12 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
 
           {/* Tips */}
           <div className="card card-interactive" style={{ background: 'rgba(58,122,92,0.06)', border: '1px solid rgba(58,122,92,0.2)' }}>
-            <h3 style={{ marginBottom: '0.5rem', fontSize: '0.95rem', color: 'var(--jade)' }}>💡 Storyteller Tips</h3>
+            <h3 style={{ marginBottom: '0.5rem', fontSize: '0.95rem', color: 'var(--jade)' }}>
+              <FontAwesomeIcon icon={faLightbulb} style={{ marginRight: 6 }} />
+              Storyteller Guidelines
+            </h3>
             <ul style={{ paddingLeft: '1.2rem', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-              <li>Use historical names like "Chola", "Mughal" to boost authenticity</li>
+              <li>Use historical names like "Chola", "Mughal" to provide context</li>
               <li>Include location details for geo-tagging on the map</li>
               <li>Click "Suggest Nodes" to branch your narrative</li>
               <li>Backtrack to any node to explore alternate paths</li>
@@ -355,16 +409,21 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
       {showAR && (
         <div className="modal-overlay" onClick={() => setShowAR(false)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ textAlign: 'center' }}>
-            <h2 style={{ marginBottom: '0.5rem' }}>📹 Upload Video Story</h2>
+            <h2 style={{ marginBottom: '0.5rem' }}>
+              <FontAwesomeIcon icon={faVideo} style={{ marginRight: 8, color: 'var(--terracotta)' }} />
+              Upload Video Story
+            </h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-              Upload a video of yourself telling the story to share with the community.
+              Upload a video recording of oral storytelling to share with the community.
             </p>
             <div style={{ background: 'var(--bg)', border: '2px dashed var(--border)', borderRadius: 'var(--radius-md)', padding: '2rem', marginBottom: '1.5rem' }}>
               {videoUrl ? (
                 <video src={videoUrl} controls autoPlay style={{ width: '100%', maxHeight: '400px', borderRadius: 'var(--radius-sm)', objectFit: 'cover' }} />
               ) : (
                 <>
-                  <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🎬</div>
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <FontAwesomeIcon icon={faFilm} style={{ fontSize: '2.5rem', color: 'var(--terracotta)' }} />
+                  </div>
                   <p style={{ color: 'var(--text-secondary)', fontStyle: 'italic', fontFamily: 'var(--font-display)', fontSize: '1.1rem' }}>
                     "{title || 'Your Story'}"
                   </p>
@@ -404,7 +463,7 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button onClick={() => setShowAR(false)} className="btn btn-ghost">Close</button>
-              <button onClick={() => { setShowAR(false); publishStory(); }} className="btn btn-primary" disabled={publishing || !title.trim() || (!content.trim() && !audioUrl && !videoUrl)}>
+              <button onClick={() => { setShowAR(false); publishStory(); }} className="btn btn-primary" disabled={publishing || !contentConsent || !title.trim() || (!content.trim() && !audioUrl && !videoUrl)}>
                 Submit Story
               </button>
             </div>

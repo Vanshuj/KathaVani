@@ -11,6 +11,10 @@ import GamificationPage from './pages/GamificationPage';
 import SettingsPage from './pages/SettingsPage';
 import StoryDetail from './pages/StoryDetail';
 import AuthPage from './pages/AuthPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import CookiesPolicyPage from './pages/CookiesPolicyPage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
 import { useAuth } from './context/AuthContext';
 import './index.css';
 
@@ -32,6 +36,10 @@ function AppRoutes() {
         <Route path="stories/:id" element={<StoryDetail />} />
         <Route path="gamification" element={<ProtectedRoute><GamificationPage /></ProtectedRoute>} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+        <Route path="privacy" element={<PrivacyPolicyPage />} />
+        <Route path="terms" element={<TermsPage />} />
+        <Route path="cookies" element={<CookiesPolicyPage />} />
+        <Route path="refund" element={<RefundPolicyPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

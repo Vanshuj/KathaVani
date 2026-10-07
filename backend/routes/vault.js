@@ -34,6 +34,8 @@ router.get('/offline-packs', async (_req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+const mongoose = require('mongoose');
+
 // POST /api/vault/sync
 router.post('/sync', authMiddleware, async (req, res) => {
   try {
@@ -42,8 +44,20 @@ router.post('/sync', authMiddleware, async (req, res) => {
       const Story  = getStory();
       const synced = [];
       for (const s of offlineStories) {
-        const exists = await Story.findById(s._id).catch(() => null);
-        if (!exists) { await Story.create({ ...s, isModerated: false }); synced.push(s._id); }
+        let exists = null;
+        if (s._id && mongoose.isValidObjectId(s._id)) {
+          exists = await Story.findById(s._id).catch(() => null);
+        }
+        if (!exists) {
+          const { _id, ...storyData } = s;
+          await Story.create({
+            ...storyData,
+            author: req.user.id,
+            authorName: req.user.name,
+            isModerated: false
+          });
+          synced.push(s._id);
+        }
       }
       return res.json({ synced, count: synced.length });
     }
