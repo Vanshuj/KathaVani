@@ -3,7 +3,16 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => localStorage.getItem('kv_theme') || 'light');
+  const [theme, setTheme] = useState(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramTheme = urlParams.get('theme');
+      if (paramTheme) return paramTheme;
+      return localStorage.getItem('kv_theme') || 'light';
+    } catch {
+      return 'light';
+    }
+  });
   const [fontSize, setFontSize] = useState(() => parseInt(localStorage.getItem('kv_fontSize') || '16'));
   const [highContrast, setHighContrast] = useState(() => localStorage.getItem('kv_hc') === 'true');
   const [isOnline, setIsOnline] = useState(navigator.onLine);

@@ -57,7 +57,7 @@ export default function AuthPage() {
               }}
             />
           </div>
-          <h1 style={{ color: 'var(--terracotta)', marginBottom: '0.3rem', fontSize: '1.8rem' }}>
+          <h1 style={{ color: 'var(--forest-green)', marginBottom: '0.35rem', fontSize: '2rem', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
             {mode === 'login' ? 'Welcome Back' : 'Join KathaVani'}
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>

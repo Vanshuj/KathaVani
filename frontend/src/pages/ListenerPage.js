@@ -160,12 +160,12 @@ export default function ListenerPage() {
 
   return (
     <div className="fade-in">
-      <div style={{ marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.2rem' }}>
-          <FontAwesomeIcon icon={faBookOpen} style={{ color: 'var(--terracotta)', fontSize: '1.6rem' }} />
-          <h1 style={{ color: 'var(--terracotta)', margin: 0 }}>Story Listener Lounge</h1>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+          <FontAwesomeIcon icon={faBookOpen} style={{ color: 'var(--forest-green)', fontSize: '1.6rem' }} />
+          <h1 style={{ color: 'var(--forest-green)', margin: 0, fontFamily: 'var(--font-display)', fontSize: '2.2rem' }}>The Story Archive & Lounge</h1>
         </div>
-        <p style={{ color: 'var(--text-muted)', margin: 0 }}>Browse, listen, and explore oral traditions in 12 Indian languages</p>
+        <p style={{ color: 'var(--charcoal-muted)', margin: 0, fontSize: '0.98rem' }}>Browse, listen, and explore oral traditions in 12 Indian languages</p>
       </div>
 
       {/* Mode tabs */}
