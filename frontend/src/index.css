@@ -421,73 +421,124 @@ a:hover { color: var(--accent-light); }
   50% { transform: rotateY(-10deg); }
 }
 
+/* ─────────────────────────────────────────────────────────────
+   CLAYMORPHIC BUTTONS (Volumetric Pillows & Tactile Squish)
+────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--radius-md);
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--radius-pill);
   border: none;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
   text-decoration: none;
+  position: relative;
+  user-select: none;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(2px) scale(0.97) !important;
 }
 
 .btn-primary {
-  background: var(--terracotta);
-  color: #fff;
+  background: var(--clay-btn-primary-bg);
+  color: #ffffff !important;
+  box-shadow: var(--clay-btn-primary-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.28);
 }
-.btn-primary:hover { background: var(--terracotta-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(180, 95, 43, 0.4); }
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--clay-btn-primary-hover);
+  color: #ffffff !important;
+}
+.btn-primary:active:not(:disabled) {
+  box-shadow: var(--clay-btn-primary-active);
+}
 
 .btn-secondary {
-  background: var(--bg-card);
+  background: var(--clay-btn-secondary-bg);
   color: var(--text-primary);
-  border: 1.5px solid var(--border-strong);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--clay-btn-secondary-shadow);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
 }
-.btn-secondary:hover {
-  background: var(--bg-elevated);
-  border-color: var(--terracotta);
+[data-theme="dark"] .btn-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
   color: var(--terracotta);
-  transform: translateY(-1px);
+  box-shadow: var(--clay-btn-secondary-hover);
+  border-color: rgba(184, 93, 52, 0.35);
+}
+.btn-secondary:active:not(:disabled) {
+  box-shadow: 0 2px 4px rgba(45, 22, 10, 0.08), inset 2px 2px 4px rgba(45, 22, 10, 0.15);
 }
 
 .btn-ghost {
   background: var(--bg-card);
   color: var(--text-secondary);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
-.btn-ghost:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(184, 93, 52, 0.25);
+}
 
-.btn-jade { background: var(--jade); color: #fff; }
-.btn-jade:hover { background: var(--jade-light); transform: translateY(-1px); }
+.btn-jade {
+  background: linear-gradient(145deg, #244d38 0%, #173325 100%);
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px -2px rgba(27, 59, 43, 0.4), inset 2px 2px 3px rgba(255, 255, 255, 0.3), inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-jade:hover:not(:disabled) {
+  background: linear-gradient(145deg, #2c5c44 0%, #1d3e2d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px -2px rgba(27, 59, 43, 0.5), inset 2px 2px 4px rgba(255, 255, 255, 0.4), inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  color: #ffffff !important;
+}
 
-.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.85rem; border-radius: var(--radius-sm); }
-.btn-lg { padding: 0.85rem 1.8rem; font-size: 1.05rem; }
+.btn-sm { padding: 0.38rem 0.9rem; font-size: 0.85rem; border-radius: var(--radius-pill); }
+.btn-lg { padding: 0.85rem 2rem; font-size: 1.05rem; border-radius: var(--radius-pill); }
 
-.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-/* Form elements */
+/* ─────────────────────────────────────────────────────────────
+   CARVED CLAY FORM CONTROLS (Intaglio Recesses)
+────────────────────────────────────────────────────────────── */
 input, textarea, select {
   background: var(--bg-elevated);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(184, 93, 52, 0.16);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 1rem;
-  padding: 0.65rem 1rem;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  padding: 0.72rem 1.15rem;
+  box-shadow: var(--clay-inset);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(180, 95, 43, 0.15);
+  box-shadow: var(--clay-inset-focus);
 }
 
 input::placeholder, textarea::placeholder {
@@ -524,90 +575,127 @@ option, optgroup {
 
 label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-secondary); font-size: 0.9rem; }
 
-/* Tags */
+/* ─────────────────────────────────────────────────────────────
+   CLAY PEBBLE TAGS & MEDALLION BADGES
+────────────────────────────────────────────────────────────── */
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.7rem;
-  border-radius: var(--radius-xl);
+  gap: 0.32rem;
+  padding: 0.28rem 0.82rem;
+  border-radius: var(--radius-pill);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px -1px rgba(45, 22, 10, 0.08), inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.8), inset -1.5px -1.5px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.tag:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px -1px rgba(45, 22, 10, 0.12), inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.9);
 }
 
-.tag-mythology { background: rgba(201, 149, 42, 0.15); color: var(--gold); }
-.tag-resistance { background: rgba(192, 57, 43, 0.12); color: var(--vermillion); }
-.tag-migration { background: rgba(44, 62, 122, 0.12); color: var(--indigo); }
-.tag-folklore { background: rgba(58, 122, 92, 0.12); color: var(--jade); }
-.tag-tribal { background: rgba(180, 95, 43, 0.12); color: var(--terracotta); }
+[data-theme="dark"] .tag {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.12), inset -1.5px -1.5px 2px rgba(0, 0, 0, 0.5);
+}
 
-[data-theme="dark"] .tag-mythology { background: rgba(245, 199, 104, 0.16); color: var(--gold); }
-[data-theme="dark"] .tag-resistance { background: rgba(248, 113, 113, 0.16); color: var(--vermillion); }
-[data-theme="dark"] .tag-migration { background: rgba(147, 197, 253, 0.16); color: var(--indigo); }
-[data-theme="dark"] .tag-folklore { background: rgba(94, 194, 144, 0.16); color: var(--jade); }
-[data-theme="dark"] .tag-tribal { background: rgba(224, 122, 95, 0.16); color: var(--terracotta); }
+.tag-mythology { background: rgba(201, 149, 42, 0.16); color: var(--gold); }
+.tag-resistance { background: rgba(192, 57, 43, 0.14); color: var(--vermillion); }
+.tag-migration { background: rgba(44, 62, 122, 0.14); color: var(--indigo); }
+.tag-folklore { background: rgba(58, 122, 92, 0.14); color: var(--jade); }
+.tag-tribal { background: rgba(180, 95, 43, 0.14); color: var(--terracotta); }
 
-/* Badges */
+[data-theme="dark"] .tag-mythology { background: rgba(245, 199, 104, 0.18); color: var(--gold); }
+[data-theme="dark"] .tag-resistance { background: rgba(248, 113, 113, 0.18); color: var(--vermillion); }
+[data-theme="dark"] .tag-migration { background: rgba(147, 197, 253, 0.18); color: var(--indigo); }
+[data-theme="dark"] .tag-folklore { background: rgba(94, 194, 144, 0.18); color: var(--jade); }
+[data-theme="dark"] .tag-tribal { background: rgba(224, 122, 95, 0.18); color: var(--terracotta); }
+
+/* Badges - Extruded Golden Clay Medallion */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.8rem;
-  border-radius: var(--radius-xl);
-  background: linear-gradient(135deg, var(--gold), var(--terracotta));
+  gap: 0.45rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #d8a543 0%, #b85d34 100%);
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
   font-family: var(--font-mono);
+  box-shadow: 0 5px 14px -2px rgba(184, 93, 52, 0.35), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.6), inset -1.5px -1.5px 3px rgba(80, 25, 8, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-/* Authenticity meter */
+/* Authenticity meter - Clay Groove */
 .authenticity-bar {
-  height: 8px;
-  border-radius: 4px;
-  background: var(--border);
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  box-shadow: inset 1.5px 1.5px 3px rgba(45, 22, 10, 0.12), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.85);
   overflow: hidden;
+  padding: 2px;
+}
+[data-theme="dark"] .authenticity-bar {
+  box-shadow: inset 1.5px 1.5px 3px rgba(0, 0, 0, 0.6), inset -1px -1px 2px rgba(255, 255, 255, 0.05);
 }
 
 .authenticity-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(90deg, var(--jade), var(--gold), var(--terracotta));
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15), inset 1px 1px 2px rgba(255, 255, 255, 0.6);
   transition: width 1s ease;
 }
 
-/* Node tree */
+/* Node tree - Clay Slab & Nodes */
 .node-tree {
   overflow-x: auto;
-  padding: 1rem;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+  padding: 1.25rem;
+  background: var(--clay-bg-card, var(--bg-card));
+  border-radius: var(--radius-lg);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="dark"] .node-tree {
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .node {
   display: inline-flex;
   align-items: center;
-  padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-xl);
-  font-size: 0.8rem;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
   font-family: var(--font-mono);
   cursor: pointer;
-  transition: all var(--transition);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   max-width: 220px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  border: 2px solid transparent;
+  border: 1px solid rgba(255, 255, 255, 0.65);
   background: var(--bg-elevated);
   color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
 }
 
-.node:hover { border-color: var(--accent-light); color: var(--text-primary); }
-.node.active { background: var(--terracotta); color: #fff; border-color: var(--terracotta-dark); }
+.node:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-light);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
+}
+.node.active {
+  background: var(--clay-btn-primary-bg);
+  color: #fff;
+  box-shadow: var(--clay-btn-primary-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
 .node.branch { border-style: dashed; border-color: var(--mist); }
 
 .node-connector {
@@ -844,27 +932,28 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--t
   border-radius: var(--radius-sm);
 }
 
-/* Notification toast */
+/* Notification toast - Tactile Clay Floating Pill */
 .toast {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
   z-index: 9999;
-  padding: 0.9rem 1.4rem;
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
+  padding: 0.95rem 1.6rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.92rem;
   font-weight: 600;
   box-shadow: var(--shadow-lg);
-  animation: fadeIn 0.3s ease;
-  max-width: 380px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  animation: fadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-width: 400px;
 }
 
-.toast-success { background: var(--jade); color: #fff; }
-.toast-warning { background: var(--gold); color: #fff; }
-.toast-error { background: var(--vermillion); color: #fff; }
-.toast-info { background: var(--indigo); color: #fff; }
+.toast-success { background: linear-gradient(145deg, #244d38 0%, #173325 100%); color: #fff; border-color: rgba(255,255,255,0.25); }
+.toast-warning { background: linear-gradient(145deg, #d8a543 0%, #b85d34 100%); color: #fff; border-color: rgba(255,255,255,0.3); }
+.toast-error { background: linear-gradient(145deg, #c0392b 0%, #96281b 100%); color: #fff; border-color: rgba(255,255,255,0.25); }
+.toast-info { background: linear-gradient(145deg, #2c3e50 0%, #1a252f 100%); color: #fff; border-color: rgba(255,255,255,0.25); }
 
-/* Modal */
+/* Modal - Tactile Sculpted Clay Slab */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -873,61 +962,96 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--t
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.25rem;
   animation: fadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: backdrop-filter 0.3s ease;
 }
 
 .modal {
-  background: var(--bg-elevated);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  max-width: 600px;
+  background: var(--clay-bg-elevated, var(--bg-elevated));
+  border-radius: var(--radius-xl);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  padding: 2.2rem;
+  max-width: 620px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-3d);
   animation: scaleUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* Tabs */
+[data-theme="dark"] .modal {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Tabs - Clay Recessed Tray & Extruded Pill Buttons */
 .tab-nav {
   display: flex;
-  gap: 0.25rem;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  padding: 0.3rem;
-  border: 1px solid var(--border);
+  gap: 0.35rem;
+  background: var(--parchment-warm);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--clay-inset);
+}
+
+[data-theme="dark"] .tab-nav {
+  background: #141d17;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .tab-btn {
   flex: 1;
-  padding: 0.6rem 1rem;
-  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.2rem;
+  border-radius: var(--radius-pill);
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-}
-
-.tab-btn.active {
-  background: var(--terracotta);
-  color: #fff;
-  box-shadow: var(--shadow-sm);
+  gap: 0.5rem;
+  position: relative;
 }
 
 .tab-btn:hover:not(.active) {
   color: var(--text-primary);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme="dark"] .tab-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  background: var(--clay-btn-primary-bg, linear-gradient(145deg, #cc673b 0%, #a44822 100%));
+  color: #ffffff !important;
+  box-shadow: var(--clay-btn-primary-shadow, 0 4px 14px rgba(184, 93, 52, 0.4), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.45), inset -1.5px -1.5px 3px rgba(90, 30, 8, 0.3));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.tab-btn:active {
+  transform: scale(0.97);
+}
+
+/* Claymorphic Floating Navigation Bar */
+header nav {
+  background: var(--nav-bg) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+[data-theme="dark"] header nav {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Scrollbar */
@@ -956,19 +1080,25 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--t
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 .recording-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--vermillion); animation: blink 1s infinite; }
 
-/* Karma display */
+/* Karma display - Tactile Pebble */
 .karma-display {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.9rem;
-  background: linear-gradient(135deg, rgba(201, 149, 42, 0.15), rgba(180, 95, 43, 0.15));
-  border: 1px solid rgba(201, 149, 42, 0.3);
-  border-radius: var(--radius-xl);
+  gap: 0.45rem;
+  padding: 0.35rem 0.95rem;
+  background: linear-gradient(145deg, #fffbf2 0%, #faefe0 100%);
+  border: 1.5px solid rgba(201, 149, 42, 0.4);
+  border-radius: var(--radius-pill);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--gold-dark);
+  box-shadow: 0 4px 12px -2px rgba(201, 149, 42, 0.2), inset 2px 2px 3px rgba(255, 255, 255, 0.95), inset -2px -2px 3px rgba(184, 93, 52, 0.1);
+}
+[data-theme="dark"] .karma-display {
+  background: linear-gradient(145deg, #222c24 0%, #17211a 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.15), inset -1.5px -1.5px 3px rgba(0, 0, 0, 0.6);
+  color: var(--gold-light);
 }
 
 @media (max-width: 768px) {

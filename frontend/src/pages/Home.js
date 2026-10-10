@@ -164,7 +164,7 @@ export default function Home() {
               <button
                 onClick={() => navigate('/storyteller')}
                 className="btn btn-primary btn-lg"
-                style={{ padding: '0.85rem 2rem', fontSize: '1rem', boxShadow: '0 4px 16px rgba(184,93,52,0.3)' }}
+                style={{ padding: '0.85rem 2rem', fontSize: '1rem' }}
               >
                 <FontAwesomeIcon icon={faMicrophone} /> Contribute a Story
               </button>
@@ -172,7 +172,7 @@ export default function Home() {
               <button
                 onClick={() => navigate('/auth')}
                 className="btn btn-primary btn-lg"
-                style={{ padding: '0.85rem 2rem', fontSize: '1rem', boxShadow: '0 4px 16px rgba(184,93,52,0.3)' }}
+                style={{ padding: '0.85rem 2rem', fontSize: '1rem' }}
               >
                 <FontAwesomeIcon icon={faStar} /> Join the Archive
               </button>
