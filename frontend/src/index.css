@@ -70,6 +70,27 @@
   --shadow-3d: 0 20px 48px -6px rgba(27, 59, 43, 0.11), 0 6px 16px -3px rgba(184, 93, 52, 0.05);
   --shadow-gold: 0 0 24px rgba(201, 151, 56, 0.25);
 
+  /* ─────────────────────────────────────────────────────────────
+     AUTHENTIC CLAYMORPHISM 3D TOKENS (Light Mode / Terracotta Pottery)
+  ────────────────────────────────────────────────────────────── */
+  --clay-bg-card: #ffffff;
+  --clay-bg-elevated: #faf6f0;
+  --clay-border: rgba(255, 255, 255, 0.85);
+  --clay-rim: rgba(255, 255, 255, 0.95);
+  --clay-inset: inset 2.5px 2.5px 6px rgba(184, 93, 52, 0.08), inset -2.5px -2.5px 6px rgba(255, 255, 255, 0.9);
+  --clay-inset-focus: inset 3px 3px 7px rgba(184, 93, 52, 0.16), inset -2px -2px 5px rgba(255, 255, 255, 0.95);
+  --shadow-clay: 12px 16px 32px -4px rgba(45, 22, 10, 0.14), 4px 6px 14px -2px rgba(184, 93, 52, 0.08), inset 3px 3px 6px 0 rgba(255, 255, 255, 0.95), inset -3px -3px 8px 0 rgba(184, 93, 52, 0.10);
+  --shadow-clay-sm: 6px 8px 18px -2px rgba(45, 22, 10, 0.12), 2px 4px 8px rgba(184, 93, 52, 0.06), inset 2px 2px 4px rgba(255, 255, 255, 0.9), inset -2px -2px 5px rgba(184, 93, 52, 0.08);
+  --shadow-clay-inset: inset 3px 3px 8px rgba(45, 22, 10, 0.10), inset -2px -2px 6px rgba(255, 255, 255, 0.85);
+  --clay-btn-primary-bg: linear-gradient(135deg, #c96538 0%, #b85d34 50%, #9e4a24 100%);
+  --clay-btn-primary-shadow: 6px 8px 20px -2px rgba(184, 93, 52, 0.40), inset 2px 2px 4px rgba(255, 255, 255, 0.45), inset -2px -2px 5px rgba(80, 25, 5, 0.35);
+  --clay-btn-primary-hover: 8px 12px 24px -2px rgba(184, 93, 52, 0.50), inset 2px 2px 5px rgba(255, 255, 255, 0.6), inset -2px -2px 5px rgba(80, 25, 5, 0.4);
+  --clay-btn-primary-active: 2px 4px 10px rgba(184, 93, 52, 0.3), inset 3px 3px 6px rgba(80, 25, 5, 0.45), inset -1px -1px 3px rgba(255, 255, 255, 0.3);
+  --clay-btn-secondary-bg: linear-gradient(135deg, #ffffff 0%, #faf5ee 100%);
+  --clay-btn-secondary-shadow: 5px 7px 16px -2px rgba(45, 22, 10, 0.12), inset 2px 2px 4px rgba(255, 255, 255, 0.95), inset -2px -2px 5px rgba(184, 93, 52, 0.12);
+  --clay-btn-secondary-hover: 7px 10px 22px -2px rgba(45, 22, 10, 0.16), inset 2px 2px 4px rgba(255, 255, 255, 1), inset -2px -2px 5px rgba(184, 93, 52, 0.16);
+  --clay-btn-ghost-shadow: inset 1.5px 1.5px 3px rgba(45, 22, 10, 0.06), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.8);
+
   --overlay: rgba(27, 59, 43, 0.45);
   --nav-bg: rgba(250, 246, 240, 0.90);
 
@@ -140,6 +161,27 @@
   --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
   --shadow-3d: 0 24px 50px rgba(0, 0, 0, 0.8);
+
+  /* ─────────────────────────────────────────────────────────────
+     AUTHENTIC CLAYMORPHISM 3D TOKENS (Dark Mode / Nizamabad Black Clay)
+  ────────────────────────────────────────────────────────────── */
+  --clay-bg-card: #18231c;
+  --clay-bg-elevated: #212f26;
+  --clay-border: rgba(255, 255, 255, 0.08);
+  --clay-rim: rgba(255, 255, 255, 0.15);
+  --clay-inset: inset 3px 3px 7px rgba(0, 0, 0, 0.7), inset -1.5px -1.5px 4px rgba(255, 255, 255, 0.06);
+  --clay-inset-focus: inset 3px 3px 8px rgba(0, 0, 0, 0.85), inset -1.5px -1.5px 4px rgba(224, 122, 95, 0.25);
+  --shadow-clay: 14px 18px 36px -4px rgba(0, 0, 0, 0.85), 4px 6px 16px rgba(0, 0, 0, 0.5), inset 2.5px 2.5px 6px 0 rgba(255, 255, 255, 0.12), inset -3px -3px 8px 0 rgba(0, 0, 0, 0.7);
+  --shadow-clay-sm: 6px 8px 20px -2px rgba(0, 0, 0, 0.75), 2px 4px 10px rgba(0, 0, 0, 0.4), inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 5px rgba(0, 0, 0, 0.6);
+  --shadow-clay-inset: inset 3px 3px 8px rgba(0, 0, 0, 0.75), inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+  --clay-btn-primary-bg: linear-gradient(135deg, #f28b6e 0%, #e07a5f 50%, #c45b40 100%);
+  --clay-btn-primary-shadow: 6px 8px 22px rgba(0, 0, 0, 0.6), inset 2px 2px 4px rgba(255, 255, 255, 0.35), inset -2px -2px 5px rgba(0, 0, 0, 0.5);
+  --clay-btn-primary-hover: 8px 12px 26px rgba(0, 0, 0, 0.75), inset 2px 2px 5px rgba(255, 255, 255, 0.45), inset -2px -2px 5px rgba(0, 0, 0, 0.6);
+  --clay-btn-primary-active: 2px 4px 10px rgba(0, 0, 0, 0.5), inset 3px 3px 6px rgba(0, 0, 0, 0.7), inset -1px -1px 3px rgba(255, 255, 255, 0.2);
+  --clay-btn-secondary-bg: linear-gradient(135deg, #28392e 0%, #1e2c22 100%);
+  --clay-btn-secondary-shadow: 5px 7px 18px rgba(0, 0, 0, 0.7), inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 5px rgba(0, 0, 0, 0.6);
+  --clay-btn-secondary-hover: 7px 10px 24px rgba(0, 0, 0, 0.8), inset 2px 2px 4px rgba(255, 255, 255, 0.15), inset -2px -2px 5px rgba(0, 0, 0, 0.7);
+  --clay-btn-ghost-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -1px -1px 3px rgba(255, 255, 255, 0.05);
   --overlay: rgba(8, 14, 10, 0.85);
 }
 
@@ -196,17 +238,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle, Peaceful Background Overlay allowing 3D Wooden Table to shine through */
+/* Tactile Claymorphic Ambient Studio Background */
 .cultural-bg {
-  background-color: transparent;
+  background-color: var(--bg);
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(184, 93, 52, 0.015) 0%, transparent 40%),
-    radial-gradient(circle at 88% 82%, rgba(201, 151, 56, 0.02) 0%, transparent 45%);
+    radial-gradient(circle at 14% 18%, rgba(184, 93, 52, 0.045) 0%, transparent 48%),
+    radial-gradient(circle at 86% 82%, rgba(201, 151, 56, 0.04) 0%, transparent 48%),
+    radial-gradient(circle at 50% 50%, rgba(27, 59, 43, 0.015) 0%, transparent 70%);
 }
 
 [data-theme="dark"] .cultural-bg {
-  background-image: none;
-  background-color: transparent;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(224, 122, 95, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 82% 82%, rgba(201, 151, 56, 0.035) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.4) 0%, transparent 75%);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -807,16 +853,19 @@ label { display: block; font-weight: 600; margin-bottom: 0.35rem; color: var(--t
 .fade-in { animation: fadeIn 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
 .slide-in { animation: slideIn 0.4s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
 
-/* Interactive Cards - Hover Lift & Golden Glow */
+/* Interactive Cards - Claymorphic 3D Hover Elevation */
 .card-interactive {
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              border-color 0.35s ease;
+  transform: perspective(1000px) translateZ(0);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.28s ease !important;
 }
 .card-interactive:hover {
-  transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 10px 25px rgba(180, 95, 43, 0.12), var(--shadow-md);
-  border-color: rgba(180, 95, 43, 0.28);
+  transform: perspective(1000px) translateY(-5px) translateZ(6px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-color: rgba(184, 93, 52, 0.35) !important;
+}
+[data-theme="dark"] .card-interactive:hover {
+  border-color: rgba(224, 122, 95, 0.35) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 /* Diya glow animation classes */
@@ -1137,4 +1186,324 @@ header nav {
     scroll-behavior: auto !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DEEP CLAYMORPHISM: WHOLE WEBSITE & EVERY PAGE EVERYWHERE
+   Tactile 3D earthenware / ceramic pottery elevation
+═══════════════════════════════════════════════════════════════ */
+
+/* 1. Universal Card Overrides to Guarantee Claymorphic Relief */
+.card {
+  background: var(--clay-bg-card, var(--bg-card)) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.75) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  position: relative;
+}
+
+[data-theme="dark"] .card {
+  background: var(--clay-bg-card, #18231c) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-4px) !important;
+  border-color: rgba(184, 93, 52, 0.3) !important;
+}
+
+[data-theme="dark"] .card:hover {
+  border-color: rgba(224, 122, 95, 0.3) !important;
+}
+
+.editorial-card-3d {
+  background: var(--clay-bg-card, var(--bg-card)) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-3d) !important;
+  position: relative;
+}
+
+.editorial-card-3d:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 28px 56px -6px rgba(45, 22, 10, 0.24), 0 10px 22px rgba(184, 93, 52, 0.10), inset 4px 4px 10px 0 rgba(255, 255, 255, 1), inset -4px -4px 12px 0 rgba(184, 93, 52, 0.18) !important;
+  border-color: rgba(184, 93, 52, 0.35) !important;
+}
+
+[data-theme="dark"] .editorial-card-3d {
+  background: var(--clay-bg-card, #18231c) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: var(--shadow-3d) !important;
+}
+
+[data-theme="dark"] .editorial-card-3d:hover {
+  box-shadow: 0 28px 60px -6px rgba(0, 0, 0, 0.92), 0 8px 24px rgba(0, 0, 0, 0.6), inset 3px 3px 7px rgba(255, 255, 255, 0.2), inset -4px -4px 11px rgba(0, 0, 0, 0.85) !important;
+  border-color: rgba(224, 122, 95, 0.35) !important;
+}
+
+/* 2. Sub-Panels, Inset Tiles & Info Trays on Every Page (Settings, Detail, Gamification, Policies) */
+.card > div[style*="background: var(--bg)"],
+.card div[style*="background: var(--bg)"],
+.card div[style*="background: var(--bg-elevated)"],
+div[style*="background: var(--bg)"][style*="border"],
+div[style*="background: var(--bg-elevated)"][style*="border"],
+div[style*="background: var(--parchment-warm)"],
+div[style*="background: var(--parchment-subtle)"],
+section.card > div[style*="background"] {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--clay-inset) !important;
+  border: 1.5px solid rgba(184, 93, 52, 0.12) !important;
+}
+
+[data-theme="dark"] .card > div[style*="background: var(--bg)"],
+[data-theme="dark"] .card div[style*="background: var(--bg)"],
+[data-theme="dark"] .card div[style*="background: var(--bg-elevated)"],
+[data-theme="dark"] div[style*="background: var(--bg)"][style*="border"],
+[data-theme="dark"] div[style*="background: var(--bg-elevated)"][style*="border"],
+[data-theme="dark"] div[style*="background: var(--parchment-warm)"],
+[data-theme="dark"] div[style*="background: var(--parchment-subtle)"],
+[data-theme="dark"] section.card > div[style*="background"] {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: inset 2.5px 2.5px 6px rgba(0, 0, 0, 0.7), inset -1px -1px 3px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* 3. Tactile Clay Checkboxes & Radios */
+input[type="checkbox"], input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1.5px solid rgba(184, 93, 52, 0.25);
+  box-shadow: var(--clay-inset);
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+input[type="radio"] {
+  border-radius: 50%;
+}
+input[type="checkbox"]:checked, input[type="radio"]:checked {
+  background: var(--clay-btn-primary-bg);
+  box-shadow: var(--clay-btn-primary-shadow);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+input[type="checkbox"]:checked::before {
+  content: "✓";
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+}
+input[type="radio"]:checked::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 4. Tactile Clay Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-elevated);
+  box-shadow: var(--clay-inset);
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--clay-btn-primary-bg);
+  box-shadow: var(--clay-btn-primary-shadow);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+/* 5. Circular Icon Buttons (Theme toggle, bookmarks, font size, close icons) */
+button[style*="borderRadius: '50%'"],
+button[style*="border-radius: 50%"],
+button[style*="borderRadius: 50%"] {
+  box-shadow: var(--shadow-sm) !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease !important;
+}
+button[style*="borderRadius: '50%'"]:hover,
+button[style*="border-radius: 50%"]:hover {
+  transform: translateY(-2px) scale(1.08) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+button[style*="borderRadius: '50%'"]:active,
+button[style*="border-radius: 50%"]:active {
+  transform: translateY(2px) scale(0.94) !important;
+}
+
+/* 6. Clay Earthenware Footer */
+footer {
+  background: var(--clay-bg-card, var(--bg-card)) !important;
+  border-top: 2px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 -12px 36px -4px rgba(45, 22, 10, 0.08), inset 0 2px 4px rgba(255, 255, 255, 0.95) !important;
+  position: relative;
+  z-index: 1;
+}
+[data-theme="dark"] footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 -14px 40px rgba(0, 0, 0, 0.7), inset 0 1.5px 3px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 7. Cookie Consent Banner */
+aside[aria-label="Cookie consent banner"] {
+  background: var(--clay-bg-elevated, var(--bg-elevated)) !important;
+  border-top: 2px solid rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 -16px 40px -4px rgba(45, 22, 10, 0.22), inset 0 2px 4px rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+[data-theme="dark"] aside[aria-label="Cookie consent banner"] {
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.8), inset 0 1.5px 3px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 8. Clay Media Elements (Video, Audio & Leaflet Maps) */
+video {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+}
+[data-theme="dark"] video {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+audio {
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  outline: none;
+}
+
+.leaflet-container {
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 2px solid rgba(255, 255, 255, 0.8) !important;
+}
+[data-theme="dark"] .leaflet-container {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+.leaflet-popup-content-wrapper {
+  background: var(--bg-card) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.7) !important;
+  color: var(--text-primary) !important;
+}
+
+/* 9. Claymorphic Floating Navigation Header */
+header nav {
+  background: var(--clay-bg-card) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay) !important;
+  border-radius: var(--radius-xl) !important;
+}
+.mobile-nav-drawer {
+  background: var(--clay-bg-elevated) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay) !important;
+  border-radius: var(--radius-lg) !important;
+}
+.karma-display {
+  background: var(--clay-bg-elevated) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay-sm) !important;
+  border-radius: var(--radius-pill) !important;
+}
+
+/* 10. Clay Modals, Dialogs & Overlay Cards */
+.modal-content,
+.modal,
+div[style*="zIndex: 1000"] > div,
+div[style*="zIndex: 999"] > div {
+  background: var(--clay-bg-card) !important;
+  border: 2px solid var(--clay-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 32px 64px -8px rgba(45, 22, 10, 0.35), var(--shadow-clay) !important;
+}
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .modal,
+[data-theme="dark"] div[style*="zIndex: 1000"] > div,
+[data-theme="dark"] div[style*="zIndex: 999"] > div {
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 32px 70px -8px rgba(0, 0, 0, 0.95), var(--shadow-clay) !important;
+}
+
+/* 11. Clay Tabs & Segmented Nav */
+.tab-nav {
+  background: var(--clay-bg-elevated) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay-inset) !important;
+  border-radius: var(--radius-pill) !important;
+  padding: 4px !important;
+  display: inline-flex !important;
+  gap: 4px !important;
+}
+.tab-btn {
+  border-radius: var(--radius-pill) !important;
+  border: none !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  cursor: pointer !important;
+}
+.tab-btn:hover:not(.active) {
+  background: rgba(184, 93, 52, 0.08) !important;
+  color: var(--text-primary) !important;
+}
+.tab-btn.active {
+  background: var(--clay-btn-primary-bg) !important;
+  color: #ffffff !important;
+  box-shadow: var(--clay-btn-primary-shadow) !important;
+}
+
+/* 12. Clay Branch Tree Nodes */
+.node {
+  background: var(--clay-bg-card) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay-sm) !important;
+  border-radius: var(--radius-md) !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.node:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: var(--shadow-clay) !important;
+}
+.node.active {
+  border-color: var(--terracotta) !important;
+  box-shadow: var(--clay-btn-primary-shadow) !important;
+}
+
+/* 13. Tactile Notification Toasts */
+.notification,
+.toast {
+  background: var(--clay-bg-elevated) !important;
+  border: 1.5px solid var(--clay-border) !important;
+  box-shadow: var(--shadow-clay) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
 

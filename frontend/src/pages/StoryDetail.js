@@ -220,11 +220,11 @@ export default function StoryDetail() {
             display: 'flex',
             alignItems: 'center',
             gap: '0.45rem',
-            background: 'var(--bg-card)',
+            background: 'var(--clay-bg-card)',
             padding: '0.35rem 0.65rem',
             borderRadius: 'var(--radius-pill)',
-            border: '1px solid var(--border-delicate)',
-            boxShadow: 'var(--shadow-sm)'
+            border: '1px solid var(--clay-border)',
+            boxShadow: 'var(--shadow-clay-sm)'
           }}
         >
           {/* Font Size A- / A / A+ */}

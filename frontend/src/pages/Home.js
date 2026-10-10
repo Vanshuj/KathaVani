@@ -140,7 +140,7 @@ export default function Home() {
                 fontFamily: 'var(--font-mono)',
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
-                boxShadow: '0 2px 10px rgba(184, 93, 52, 0.15)'
+                boxShadow: 'var(--shadow-clay-sm)'
               }}
             >
               <span style={{ color: 'var(--gold)' }}>❖</span>
@@ -323,7 +323,7 @@ export default function Home() {
                       borderRadius: '12px',
                       textTransform: 'uppercase',
                       letterSpacing: '0.04em',
-                      boxShadow: 'var(--shadow-sm)'
+                      boxShadow: 'var(--shadow-clay-sm)'
                     }}
                   >
                     {categoryName}
@@ -336,8 +336,8 @@ export default function Home() {
                       position: 'absolute',
                       top: 12,
                       right: 12,
-                      background: 'var(--bg-card)',
-                      border: '1px solid var(--border)',
+                      background: 'var(--clay-bg-card)',
+                      border: '1px solid var(--clay-border)',
                       borderRadius: '50%',
                       width: 32,
                       height: 32,
@@ -346,7 +346,7 @@ export default function Home() {
                       justifyContent: 'center',
                       cursor: 'pointer',
                       color: isBookmarked ? 'var(--terracotta)' : 'var(--charcoal-muted)',
-                      boxShadow: 'var(--shadow-sm)'
+                      boxShadow: 'var(--shadow-clay-sm)'
                     }}
                   >
                     <FontAwesomeIcon icon={faBookmark} size="sm" />

@@ -8,7 +8,6 @@ import {
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import CookieConsent from './CookieConsent';
-import Background3D from './Background3D';
 import logo from '../assets/logo.png';
 
 export default function Layout() {
@@ -29,9 +28,6 @@ export default function Layout() {
   return (
     <div className="app-shell cultural-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
 
-      {/* 3D Wooden Table Global Background Effect */}
-      <Background3D />
-
       {/* Skip to main content for accessibility */}
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
@@ -48,7 +44,7 @@ export default function Layout() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-md)',
+            boxShadow: 'var(--shadow-clay)',
             transition: 'all var(--transition)'
           }}
         >
@@ -164,14 +160,10 @@ export default function Layout() {
                   {user.name.split(' ')[0]}
                 </span>
                 <span
+                  className="karma-display"
                   style={{
-                    background: 'var(--gold-subtle)',
-                    color: 'var(--gold-dark)',
-                    padding: '0.2rem 0.55rem',
-                    borderRadius: '12px',
-                    fontSize: '0.74rem',
-                    fontWeight: 700,
-                    fontFamily: 'var(--font-mono)'
+                    padding: '0.2rem 0.6rem',
+                    fontSize: '0.74rem'
                   }}
                 >
                   <FontAwesomeIcon icon={faStar} size="xs" style={{ marginRight: 3 }} />
@@ -213,19 +205,15 @@ export default function Layout() {
       {/* Mobile Nav Menu Dropdown */}
       {menuOpen && (
         <div
+          className="mobile-nav-drawer"
           style={{
-            background: 'var(--bg-elevated)',
-            borderBottom: '1px solid var(--border)',
             padding: '1rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.5rem',
             position: 'sticky',
             top: 72,
-            zIndex: 99,
-            margin: '0.5rem 1.25rem 0',
-            borderRadius: 'var(--radius-md)',
-            boxShadow: 'var(--shadow-md)'
+            zIndex: 99
           }}
         >
           {navLinks.map((link) => (

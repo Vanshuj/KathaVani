@@ -142,7 +142,7 @@ export default function GamificationPage() {
                               justifyContent: 'flex-start', 
                               fontFamily: 'var(--font-body)',
                               transform: answers[qIdx] === aIdx ? 'scale(1.02) translateX(4px)' : 'none',
-                              boxShadow: answers[qIdx] === aIdx ? '0 4px 12px rgba(180, 95, 43, 0.2)' : 'none',
+                              boxShadow: answers[qIdx] === aIdx ? 'var(--clay-btn-primary-shadow)' : 'none',
                               transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s'
                             }}>
                             <span style={{ fontFamily: 'var(--font-mono)', marginRight: 8 }}>{String.fromCharCode(65 + aIdx)}.</span>

@@ -20,10 +20,7 @@ export default function FeaturedStoryCard() {
           padding: 0,
           overflow: 'hidden',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
-          boxShadow: 'var(--shadow-md)'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
         }}
       >
         {/* ─────────────────────────────────────────────────────────────
@@ -242,8 +239,7 @@ export default function FeaturedStoryCard() {
               className="btn btn-primary btn-lg"
               style={{
                 padding: '0.85rem 2rem',
-                fontSize: '1rem',
-                boxShadow: '0 4px 16px rgba(184, 93, 52, 0.25)'
+                fontSize: '1rem'
               }}
             >
               <FontAwesomeIcon icon={faBookOpen} /> Read Now

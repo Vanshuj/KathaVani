@@ -160,13 +160,13 @@ export default function CulturalMapSection() {
             position: 'relative',
             height: 380,
             background: 'linear-gradient(135deg, var(--parchment-subtle) 0%, var(--parchment-warm) 100%)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-lg)',
+            border: '1px solid var(--clay-border)',
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: 'inset 0 2px 10px rgba(27, 59, 43, 0.05)'
+            boxShadow: 'var(--shadow-clay-inset)'
           }}
         >
           {/* Subtle Topographical Contour Waves */}
@@ -247,14 +247,14 @@ export default function CulturalMapSection() {
                       left: '50%',
                       transform: 'translateX(-50%)',
                       whiteSpace: 'nowrap',
-                      background: 'var(--bg-elevated)',
+                      background: 'var(--clay-bg-elevated)',
                       color: 'var(--text-primary)',
-                      border: '1px solid var(--border-strong)',
+                      border: '1px solid var(--clay-border)',
                       fontSize: '0.68rem',
                       fontFamily: 'var(--font-mono)',
-                      padding: '0.2rem 0.55rem',
-                      borderRadius: '10px',
-                      boxShadow: 'var(--shadow-md)',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: 'var(--radius-pill)',
+                      boxShadow: 'var(--shadow-clay-sm)',
                       pointerEvents: 'none'
                     }}
                   >
