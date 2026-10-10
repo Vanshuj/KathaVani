@@ -18,7 +18,7 @@ const computeAuth = (content, tags) => {
 // GET /api/stories
 router.get('/', optionalAuth, async (req, res) => {
   try {
-    const { tag, language, region, search, page = 1, limit = 20 } = req.query;
+    const { tag, language, region, search, author, likedBy, page = 1, limit = 20 } = req.query;
 
     if (isMongoMode()) {
       const Story = getStory();
@@ -27,6 +27,8 @@ router.get('/', optionalAuth, async (req, res) => {
       if (language) query.language = language;
       if (region)   query.region   = region;
       if (search)   query.$or = [{ title: { $regex: search, $options: 'i' } }, { content: { $regex: search, $options: 'i' } }];
+      if (author)   query.$or = [{ author: author }, { authorName: author }];
+      if (likedBy)  query.voterIds = likedBy;
       const total   = await Story.countDocuments(query);
       const stories = await Story.find(query).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(Number(limit));
       return res.json({ stories, total, page: Number(page), limit: Number(limit) });
@@ -37,6 +39,8 @@ router.get('/', optionalAuth, async (req, res) => {
     if (language) stories = stories.filter(s => s.language === language);
     if (region)   stories = stories.filter(s => s.region === region);
     if (search)   { const q = search.toLowerCase(); stories = stories.filter(s => s.title.toLowerCase().includes(q) || s.content.toLowerCase().includes(q)); }
+    if (author)   stories = stories.filter(s => (s.author && s.author.toString() === author.toString()) || (s.authorName && s.authorName.toLowerCase() === author.toLowerCase()));
+    if (likedBy)  stories = stories.filter(s => s.voterIds && (s.voterIds.includes(likedBy) || s.voterIds.map(v => (v._id || v).toString()).includes(likedBy.toString())));
     stories.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     res.json({ stories: stories.slice((page - 1) * limit, page * limit), total: stories.length, page: Number(page), limit: Number(limit) });
   } catch (err) { res.status(500).json({ error: err.message }); }

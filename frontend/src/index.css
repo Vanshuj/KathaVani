@@ -196,19 +196,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle, Peaceful Paper-like Background Texture */
+/* Subtle, Peaceful Background Overlay allowing 3D Wooden Table to shine through */
 .cultural-bg {
-  background-color: var(--bg);
+  background-color: transparent;
   background-image:
-    radial-gradient(circle at 12% 18%, rgba(184, 93, 52, 0.025) 0%, transparent 40%),
-    radial-gradient(circle at 88% 82%, rgba(201, 151, 56, 0.03) 0%, transparent 45%),
-    url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.1 0 0 0 0 0.15 0 0 0 0 0.1 0 0 0 0.015 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)' opacity='0.7'/%3E%3C/svg%3E");
-  background-attachment: fixed;
+    radial-gradient(circle at 12% 18%, rgba(184, 93, 52, 0.015) 0%, transparent 40%),
+    radial-gradient(circle at 88% 82%, rgba(201, 151, 56, 0.02) 0%, transparent 45%);
 }
 
 [data-theme="dark"] .cultural-bg {
   background-image: none;
-  background-color: var(--bg);
+  background-color: transparent;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -337,20 +335,25 @@ a:hover { color: var(--accent-light); }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 6px 20px -3px rgba(35, 15, 5, 0.12), 0 1px 4px rgba(0, 0, 0, 0.04);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
   position: relative;
   will-change: transform;
 }
 
 .editorial-card-3d:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-3d);
+  transform: translateY(-6px);
+  box-shadow: 0 18px 38px -6px rgba(30, 12, 4, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
   border-color: var(--border-strong);
 }
 
 [data-theme="dark"] .editorial-card-3d {
   background: var(--bg-card);
+  box-shadow: 0 8px 26px -3px rgba(0, 0, 0, 0.65), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .editorial-card-3d:hover {
+  box-shadow: 0 22px 50px -6px rgba(0, 0, 0, 0.85), 0 6px 16px rgba(0, 0, 0, 0.5);
 }
 
 /* Editorial Drop-Cap */

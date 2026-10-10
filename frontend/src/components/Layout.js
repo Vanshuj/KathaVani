@@ -8,6 +8,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import CookieConsent from './CookieConsent';
+import Background3D from './Background3D';
 import logo from '../assets/logo.png';
 
 export default function Layout() {
@@ -27,6 +28,9 @@ export default function Layout() {
 
   return (
     <div className="app-shell cultural-bg" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+
+      {/* 3D Wooden Table Global Background Effect */}
+      <Background3D />
 
       {/* Skip to main content for accessibility */}
       <a href="#main-content" className="skip-link">Skip to main content</a>
@@ -260,7 +264,9 @@ export default function Layout() {
           maxWidth: 1260,
           margin: '0 auto',
           width: '100%',
-          outline: 'none'
+          outline: 'none',
+          position: 'relative',
+          zIndex: 1
         }}
       >
         <Outlet />
@@ -276,7 +282,9 @@ export default function Layout() {
           padding: '3.5rem 1.5rem 2rem',
           color: 'var(--charcoal-muted)',
           fontSize: '0.9rem',
-          marginTop: 'auto'
+          marginTop: 'auto',
+          position: 'relative',
+          zIndex: 1
         }}
       >
         <div
