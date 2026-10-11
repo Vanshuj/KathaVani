@@ -1,10 +1,11 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMicrophone, faMicrophoneSlash, faLightbulb, faCodeBranch,
   faUpload, faWandMagicSparkles, faHistory, faSave, faRandom,
-  faAward, faMusic, faCheckCircle, faChartBar, faVideo, faFilm, faShieldAlt
+  faAward, faMusic, faCheckCircle, faChartBar, faVideo, faFilm, faShieldAlt,
+  faPenToSquare, faBook, faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
@@ -12,7 +13,7 @@ import NodeTree from '../components/NodeTree';
 import WhatIfModal from '../components/WhatIfModal';
 import AuthenticityMeter from '../components/AuthenticityMeter';
 import { generateNodeSuggestions, analyzeSentiment, SOUNDSCAPES, generateStorySprout } from '../services/mockAI';
-import { createStory, saveNodeGraph, addKarma, uploadFile } from '../services/api';
+import { createStory, updateStory, getStory, saveNodeGraph, addKarma, uploadFile } from '../services/api';
 
 const TAG_OPTIONS = ['mythology', 'resistance', 'migration', 'folklore', 'tribal', 'history', 'nature', 'family'];
 const REGIONS = ['North India', 'South India', 'East India', 'West India', 'Central India', 'Northeast India', 'Pan India'];
@@ -24,6 +25,8 @@ export default function StorytellerPage() {
   const { user, updateUser } = useAuth();
   const { showNotification } = useApp();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -45,10 +48,65 @@ export default function StorytellerPage() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
   const [contentConsent, setContentConsent] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const baseContentRef = useRef('');
   const textareaRef = useRef();
+
+  // Load existing story if in edit mode
+  useEffect(() => {
+    if (!editId) {
+      setIsEditMode(false);
+      return;
+    }
+    let active = true;
+    setLoadingEdit(true);
+    getStory(editId)
+      .then(story => {
+        if (!active) return;
+        if (!story) {
+          showNotification('Manuscript not found', 'error');
+          navigate('/storyteller');
+          return;
+        }
+        // Verify author permissions
+        const isAuthor = Boolean(
+          user && (
+            String(user._id || user.id) === String(story.author?._id || story.author) ||
+            (user.name && story.authorName && user.name.toLowerCase() === story.authorName.toLowerCase()) ||
+            user.role === 'admin'
+          )
+        );
+        if (user && !isAuthor) {
+          showNotification('You do not have permission to edit this manuscript', 'error');
+          navigate(`/stories/${editId}`);
+          return;
+        }
+
+        setTitle(story.title || '');
+        setContent(story.content || '');
+        setLanguage(story.language || 'English');
+        setRegion(story.region || 'Pan India');
+        setSelectedTags(story.tags || []);
+        if (story.nodeGraph && story.nodeGraph.length > 0) {
+          setNodes(story.nodeGraph);
+        }
+        if (story.audioUrl) setAudioUrl(story.audioUrl);
+        if (story.videoUrl) setVideoUrl(story.videoUrl);
+        setContentConsent(true);
+        setIsEditMode(true);
+      })
+      .catch(err => {
+        if (active) showNotification(err.error || 'Failed to load manuscript for editing', 'error');
+      })
+      .finally(() => {
+        if (active) setLoadingEdit(false);
+      });
+
+    return () => { active = false; };
+  }, [editId, user, navigate, showNotification]);
 
   const sentiment_data = content.length > 50 ? analyzeSentiment(content) : null;
 
@@ -86,25 +144,53 @@ export default function StorytellerPage() {
 
   const publishStory = async () => {
     if (!user) {
-      showNotification('Please sign in or create an account to publish stories', 'warning');
+      showNotification('Please sign in or create an account to publish or edit stories', 'warning');
       navigate('/auth');
       return;
     }
     if (!contentConsent) {
-      showNotification('Please confirm cultural authenticity and CC BY-NC 4.0 licensing consent before publishing', 'warning');
+      showNotification('Please confirm cultural authenticity and CC BY-NC 4.0 licensing consent', 'warning');
       return;
     }
-    if (!title.trim() || (!content.trim() && !audioUrl && !videoUrl)) { showNotification('Title and either content, audio, or video are required', 'warning'); return; }
+    if (!title.trim() || (!content.trim() && !audioUrl && !videoUrl)) {
+      showNotification('Title and either content, audio, or video are required', 'warning');
+      return;
+    }
     setPublishing(true);
     try {
-      const story = await createStory({ title, content, language, region, tags: selectedTags, nodeGraph: nodes, audioUrl, videoUrl });
-      if (nodes.length > 0) await saveNodeGraph(story._id, nodes).catch(() => {});
-      const karmaResult = await addKarma(20);
-      updateUser({ karma: karmaResult.karma, badges: karmaResult.badges });
-      setPublishedId(story._id);
-      showNotification('Story published to Community Vault!', 'success');
+      if (isEditMode && editId) {
+        await updateStory(editId, {
+          title,
+          content,
+          language,
+          region,
+          tags: selectedTags,
+          nodeGraph: nodes,
+          audioUrl,
+          videoUrl
+        });
+        if (nodes.length > 0) await saveNodeGraph(editId, nodes).catch(() => {});
+        setPublishedId(editId);
+        showNotification('Manuscript updated successfully in the Vault!', 'success');
+      } else {
+        const story = await createStory({
+          title,
+          content,
+          language,
+          region,
+          tags: selectedTags,
+          nodeGraph: nodes,
+          audioUrl,
+          videoUrl
+        });
+        if (nodes.length > 0) await saveNodeGraph(story._id, nodes).catch(() => {});
+        const karmaResult = await addKarma(20);
+        updateUser({ karma: karmaResult.karma, badges: karmaResult.badges });
+        setPublishedId(story._id);
+        showNotification('Story published to Community Vault!', 'success');
+      }
     } catch (err) {
-      showNotification(err.error || 'Failed to publish', 'error');
+      showNotification(err.error || 'Failed to save manuscript', 'error');
     } finally {
       setPublishing(false);
     }
@@ -152,22 +238,51 @@ export default function StorytellerPage() {
     showNotification('Story seed prompt generated successfully.', 'success');
   };
 
+  if (loadingEdit) {
+    return (
+      <div style={{ padding: '4rem 1rem', textAlign: 'center' }}>
+        <div className="spinner" style={{ margin: '0 auto 1rem' }} />
+        <div style={{ fontFamily: 'var(--font-editorial)', fontStyle: 'italic', color: 'var(--charcoal-muted)' }}>
+          Retrieving manuscript from archive for revision...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fade-in">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 style={{ color: 'var(--terracotta)', marginBottom: '0.2rem' }}>
-            <FontAwesomeIcon icon={faMicrophone} style={{ marginRight: 10 }} />
-            Storyteller Workshop
-          </h1>
-          <p style={{ color: 'var(--text-muted)', margin: 0 }}>Craft, branch, and publish oral and written traditions to the vault</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
+            <h1 style={{ color: 'var(--terracotta)', margin: 0 }}>
+              <FontAwesomeIcon icon={isEditMode ? faPenToSquare : faMicrophone} style={{ marginRight: 10 }} />
+              {isEditMode ? 'Edit Story Workshop' : 'Storyteller Workshop'}
+            </h1>
+            {isEditMode && (
+              <span className="badge" style={{ background: 'var(--gold-subtle)', color: 'var(--gold)', border: '1px solid rgba(201,149,42,0.3)', fontSize: '0.75rem' }}>
+                Revision Mode
+              </span>
+            )}
+          </div>
+          <p style={{ color: 'var(--text-muted)', margin: 0 }}>
+            {isEditMode
+              ? <span>Refining published oral manuscript: <strong style={{ color: 'var(--forest-green)' }}>"{title || 'Untitled'}"</strong></span>
+              : 'Craft, branch, and publish oral and written traditions to the vault'}
+          </p>
         </div>
-        {user && (
-          <span className="badge" style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--terracotta-subtle)', color: 'var(--terracotta)', border: '1px solid rgba(184, 93, 52, 0.3)' }}>
-            <FontAwesomeIcon icon={faAward} style={{ marginRight: 6 }} />
-            Story Custodian
-          </span>
-        )}
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          {isEditMode && editId && (
+            <button onClick={() => navigate(`/stories/${editId}`)} className="btn btn-ghost btn-sm">
+              <FontAwesomeIcon icon={faBook} style={{ marginRight: 5 }} /> View Published Lore
+            </button>
+          )}
+          {user && (
+            <span className="badge" style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--terracotta-subtle)', color: 'var(--terracotta)', border: '1px solid rgba(184, 93, 52, 0.3)' }}>
+              <FontAwesomeIcon icon={faAward} style={{ marginRight: 6 }} />
+              Story Custodian
+            </span>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '1.5rem' }}>
@@ -311,25 +426,39 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
             </div>
           )}
 
-          {/* Publish */}
+          {/* Publish / Update Card */}
           <div className="card" style={{ background: 'linear-gradient(135deg, rgba(180,95,43,0.08), rgba(201,149,42,0.08))' }}>
             {publishedId ? (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ marginBottom: '0.5rem' }}>
                   <FontAwesomeIcon icon={faCheckCircle} style={{ fontSize: '2.5rem', color: 'var(--jade)' }} />
                 </div>
-                <h3>Story Published!</h3>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>Your story is now archived in the Community Vault</p>
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
-                  <button onClick={() => navigate(`/stories/${publishedId}`)} className="btn btn-primary">View Story</button>
-                  <button onClick={() => { setTitle(''); setContent(''); setNodes([]); setPublishedId(null); setSelectedTags([]); setContentConsent(false); }} className="btn btn-ghost">Write Another</button>
+                <h3>{isEditMode ? 'Manuscript Updated Successfully!' : 'Story Published!'}</h3>
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                  {isEditMode
+                    ? 'Your revisions have been saved and preserved in the Community Vault.'
+                    : 'Your story is now archived in the Community Vault'}
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button onClick={() => navigate(`/stories/${publishedId}`)} className="btn btn-primary">
+                    <FontAwesomeIcon icon={faBook} style={{ marginRight: 6 }} /> View Manuscript
+                  </button>
+                  <button onClick={() => { setIsEditMode(false); navigate('/storyteller'); setTitle(''); setContent(''); setNodes([]); setPublishedId(null); setSelectedTags([]); setContentConsent(false); }} className="btn btn-ghost">
+                    {isEditMode ? 'Write New Story' : 'Write Another'}
+                  </button>
                 </div>
               </div>
             ) : (
               <div>
                 <div style={{ marginBottom: '0.75rem' }}>
-                  <h3 style={{ margin: '0 0 0.25rem' }}>Ready to Publish?</h3>
-                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Contribute your story to the community archive for oral preservation</p>
+                  <h3 style={{ margin: '0 0 0.25rem' }}>
+                    {isEditMode ? 'Save Manuscript Revisions?' : 'Ready to Publish?'}
+                  </h3>
+                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>
+                    {isEditMode
+                      ? 'Preserve your refined storytelling and updated branches in the community vault'
+                      : 'Contribute your story to the community archive for oral preservation'}
+                  </p>
                 </div>
 
                 <div style={{ margin: '0.75rem 0 1rem', padding: '0.75rem 1rem', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
@@ -347,13 +476,21 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
                   </label>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  {isEditMode && (
+                    <button onClick={() => navigate(`/stories/${editId}`)} className="btn btn-ghost" type="button">
+                      Cancel
+                    </button>
+                  )}
                   <button 
                     onClick={publishStory} 
                     className="btn btn-primary btn-lg" 
                     disabled={publishing || !contentConsent || !title.trim() || (!content.trim() && !audioUrl && !videoUrl)}
                   >
-                    <FontAwesomeIcon icon={faUpload} /> {publishing ? 'Publishing…' : 'Publish to Vault'}
+                    <FontAwesomeIcon icon={isEditMode ? faSave : faUpload} style={{ marginRight: 6 }} />
+                    {publishing
+                      ? (isEditMode ? 'Saving Changes…' : 'Publishing…')
+                      : (isEditMode ? 'Save & Update Manuscript' : 'Publish to Vault')}
                   </button>
                 </div>
               </div>

@@ -39,6 +39,9 @@ export const voteStory = (id) => api.post(`/stories/${id}/vote`);
 export const getAuthenticity = (id) => api.get(`/stories/${id}/authenticity`);
 export const getGeoStories = () => api.get('/stories/geo/map');
 export const saveNodeGraph = (id, nodeGraph) => api.put(`/stories/${id}/nodes`, { nodeGraph });
+export const getStoryReviews = (id) => api.get(`/stories/${id}/reviews`);
+export const submitStoryReview = (id, data) => api.post(`/stories/${id}/reviews`, data);
+export const deleteStoryReview = (id, reviewId) => api.delete(`/stories/${id}/reviews/${reviewId}`);
 
 // Users
 export const updatePreferences = (data) => api.put('/users/preferences', data);

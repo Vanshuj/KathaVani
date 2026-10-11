@@ -12,6 +12,8 @@ const storyRoutes = require('./routes/stories');
 const userRoutes = require('./routes/users');
 const gamificationRoutes = require('./routes/gamification');
 const vaultRoutes = require('./routes/vault');
+const adminRoutes = require('./routes/admin');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +38,8 @@ app.use('/api/stories', storyRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/vault', vaultRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Fallback routes in case frontend sends requests without /api prefix
 app.use('/auth', authRoutes);
@@ -43,6 +47,8 @@ app.use('/stories', storyRoutes);
 app.use('/users', userRoutes);
 app.use('/gamification', gamificationRoutes);
 app.use('/vault', vaultRoutes);
+app.use('/admin', adminRoutes);
+app.use('/notifications', notificationRoutes);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),

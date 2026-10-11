@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faUser, faPalette, faBell, faShield, faUniversalAccess, faTrash, faKey,
-  faSave, faCog, faSun, faMoon, faDownload, faUserShield
+  faSave, faCog, faSun, faMoon, faDownload, faUserShield, faBook, faPenToSquare,
+  faEye, faPlus, faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
-import { updatePreferences, changePassword, deleteAccount } from '../services/api';
+import { updatePreferences, changePassword, deleteAccount, getStories } from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LANGUAGES = ['English', 'Hindi', 'Tamil', 'Telugu', 'Bengali', 'Marathi', 'Gujarati', 'Kannada', 'Malayalam', 'Odia', 'Punjabi', 'Assamese'];
@@ -22,6 +23,8 @@ export default function SettingsPage() {
   const [prefs, setPrefs] = useState({ name: user?.name || '', language: user?.language || 'English', region: user?.region || 'Pan India', storyPreferences: user?.storyPreferences || [], narrationMode: user?.narrationMode || 'voice', notifications: user?.notifications ?? true, subtitles: user?.subtitles || false });
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirm: '' });
   const [pwError, setPwError] = useState('');
+  const [userStories, setUserStories] = useState([]);
+  const [loadingUserStories, setLoadingUserStories] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,8 +41,22 @@ export default function SettingsPage() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (tab === 'mystories' && user) {
+      setLoadingUserStories(true);
+      getStories({ author: user._id || user.id })
+        .then(res => {
+          const list = res.stories || res || [];
+          setUserStories(list);
+        })
+        .catch(() => {})
+        .finally(() => setLoadingUserStories(false));
+    }
+  }, [tab, user]);
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: faUser },
+    { id: 'mystories', label: 'My Stories', icon: faBook },
     { id: 'appearance', label: 'Appearance', icon: faPalette },
     { id: 'notifications', label: 'Notifications', icon: faBell },
     { id: 'security', label: 'Security', icon: faShield },
@@ -175,6 +192,114 @@ export default function SettingsPage() {
                   <FontAwesomeIcon icon={faSave} /> {saving ? 'Saving…' : 'Save Preferences'}
                 </button>
               </div>
+            </div>
+          )}
+
+          {tab === 'mystories' && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div>
+                  <h2 style={{ margin: '0 0 0.25rem', fontSize: '1.2rem' }}>My Published Lore</h2>
+                  <p style={{ margin: 0, fontSize: '0.86rem', color: 'var(--text-muted)' }}>
+                    Manage and revise your oral storytelling contributions preserved in the Vault
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate('/storyteller')}
+                  className="btn btn-primary btn-sm"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+                >
+                  <FontAwesomeIcon icon={faPlus} /> Craft New Story
+                </button>
+              </div>
+
+              {loadingUserStories ? (
+                <div style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                  <FontAwesomeIcon icon={faSpinner} spin style={{ fontSize: '1.75rem', color: 'var(--terracotta)', marginBottom: '0.75rem' }} />
+                  <p style={{ color: 'var(--text-muted)', margin: 0 }}>Retrieving your manuscripts…</p>
+                </div>
+              ) : userStories.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border)' }}>
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <FontAwesomeIcon icon={faBook} style={{ fontSize: '2.5rem', color: 'var(--terracotta)', opacity: 0.7 }} />
+                  </div>
+                  <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.1rem' }}>No Stories Preserved Yet</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', maxWidth: 420, margin: '0 auto 1.25rem' }}>
+                    You haven't contributed any cultural stories to the living oral archive yet. Share your folklore, ancestral legends, or regional epics.
+                  </p>
+                  <button onClick={() => navigate('/storyteller')} className="btn btn-primary">
+                    <FontAwesomeIcon icon={faPlus} style={{ marginRight: 6 }} /> Start Storytelling
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {userStories.map(s => (
+                    <div
+                      key={s._id}
+                      className="card-interactive"
+                      style={{
+                        padding: '1rem 1.25rem',
+                        background: 'var(--bg-card)',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1.5px solid var(--clay-border)',
+                        boxShadow: 'var(--shadow-clay-sm)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: '1rem'
+                      }}
+                    >
+                      <div style={{ flex: '1 1 300px' }}>
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.35rem', alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.74rem', background: 'var(--sage-subtle)', color: 'var(--forest-green)', padding: '0.15rem 0.6rem', borderRadius: 'var(--radius-pill)', fontWeight: 600 }}>
+                            {s.language || 'English'}
+                          </span>
+                          {s.region && (
+                            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                              &bull; {s.region}
+                            </span>
+                          )}
+                          {s.tags?.slice(0, 2).map(t => (
+                            <span key={t} className={`tag tag-${t}`} style={{ fontSize: '0.7rem', padding: '0.1rem 0.5rem' }}>{t}</span>
+                          ))}
+                        </div>
+                        <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.05rem', color: 'var(--forest-green)' }}>
+                          {s.title}
+                        </h3>
+                        <p style={{ margin: 0, fontSize: '0.84rem', color: 'var(--text-secondary)', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                          {s.content}
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.55rem', alignItems: 'center' }}>
+                        <button
+                          onClick={() => navigate(`/stories/${s._id}`)}
+                          className="btn btn-ghost btn-sm"
+                          style={{ borderColor: 'var(--border-delicate)' }}
+                          title="Read published manuscript"
+                        >
+                          <FontAwesomeIcon icon={faEye} style={{ marginRight: 5 }} /> Read
+                        </button>
+                        <button
+                          onClick={() => navigate(`/storyteller?edit=${s._id}`)}
+                          className="btn btn-primary btn-sm"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            borderRadius: 'var(--radius-pill)',
+                            padding: '0.35rem 0.85rem'
+                          }}
+                          title="Edit your story"
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} /> Edit Story
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

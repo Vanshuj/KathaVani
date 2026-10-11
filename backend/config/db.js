@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // ─── In-memory store (fallback / demo) ───────────────────────────────────────
-const inMemoryStore = { users: [], stories: [] };
+const inMemoryStore = { users: [], stories: [], auditLogs: [], notifications: [] };
 
 // ─── Mode flag ────────────────────────────────────────────────────────────────
 let usingMongo = false;
@@ -182,6 +182,37 @@ const seedMongo = async () => {
       console.log(`🌱  Ensured demo users exist in MongoDB.`);
     }
 
+    // Ensure at least one initial administrator exists
+    const adminCount = await User.countDocuments({ role: 'admin' });
+    if (adminCount === 0) {
+      const bcrypt = require('bcryptjs');
+      const adminEmail = (process.env.ADMIN_EMAIL || 'admin@kathavani.org').trim().toLowerCase();
+      const adminPassword = process.env.ADMIN_PASSWORD || 'AdminKatha@2024!';
+      const adminName = process.env.ADMIN_NAME || 'Master Administrator';
+      const hash = await bcrypt.hash(adminPassword, 10);
+
+      const existingUser = await User.findOne({ email: adminEmail });
+      if (existingUser) {
+        existingUser.role = 'admin';
+        existingUser.status = 'active';
+        await existingUser.save();
+        console.log(`🛡️  Promoted existing user ${adminEmail} to initial Administrator.`);
+      } else {
+        await User.create({
+          name: adminName,
+          email: adminEmail,
+          password: hash,
+          role: 'admin',
+          status: 'active',
+          language: 'English',
+          region: 'Pan India',
+          karma: 999,
+          badges: ['Master Storyteller', 'Cultural Guardian']
+        });
+        console.log(`🛡️  Created initial Administrator account (${adminEmail}) from configuration.`);
+      }
+    }
+
     let seededCount = 0;
     for (const s of SEED_STORIES) {
       const exists = await Story.findOne({ title: s.title });
@@ -192,6 +223,9 @@ const seedMongo = async () => {
           ...s,
           author: authorUser._id,
           authorName: authorUser.name,
+          moderationStatus: 'approved',
+          isModerated: true,
+          isDeleted: false,
           voterIds: [],
           nodeGraph: []
         });
@@ -212,25 +246,111 @@ const seedMongo = async () => {
 // Seed in-memory store
 const seedInMemory = () => {
   const bcrypt = require('bcryptjs');
-  const hash   = bcrypt.hashSync('demo123', 10);
+  const hash = bcrypt.hashSync('demo123', 10);
+  const adminHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'AdminKatha@2024!', 10);
+  const adminEmail = (process.env.ADMIN_EMAIL || 'admin@kathavani.org').trim().toLowerCase();
 
+  inMemoryStore.auditLogs = inMemoryStore.auditLogs || [];
   inMemoryStore.users = [
-    { _id: 'user-1', name: 'Priya Sharma', email: 'priya@demo.com', password: hash, language: 'Hindi', region: 'North India', storyPreferences: ['mythology','folklore'],  narrationMode: 'voice', karma: 450, badges: ['Elder Storyteller','Myth Keeper'], theme: 'light', fontSize: 16, notifications: true,  highContrast: false, subtitles: false, createdAt: new Date() },
-    { _id: 'user-2', name: 'Arjun Mehta',  email: 'arjun@demo.com', password: hash, language: 'Tamil', region: 'South India', storyPreferences: ['resistance','migration'], narrationMode: 'text',  karma: 320, badges: ['Story Seed'],                    theme: 'dark',  fontSize: 14, notifications: false, highContrast: false, subtitles: true,  createdAt: new Date() },
+    {
+      _id: 'admin-1',
+      name: process.env.ADMIN_NAME || 'Master Administrator',
+      email: adminEmail,
+      password: adminHash,
+      role: 'admin',
+      status: 'active',
+      language: 'English',
+      region: 'Pan India',
+      storyPreferences: ['mythology', 'folklore'],
+      narrationMode: 'voice',
+      karma: 999,
+      badges: ['Master Storyteller', 'Cultural Guardian'],
+      theme: 'light',
+      fontSize: 16,
+      notifications: true,
+      highContrast: false,
+      subtitles: false,
+      isDeleted: false,
+      restrictedCapabilities: [],
+      createdAt: new Date()
+    },
+    { _id: 'user-1', name: 'Priya Sharma', email: 'priya@demo.com', password: hash, role: 'user', status: 'active', isDeleted: false, restrictedCapabilities: [], language: 'Hindi', region: 'North India', storyPreferences: ['mythology','folklore'],  narrationMode: 'voice', karma: 450, badges: ['Elder Storyteller','Myth Keeper'], theme: 'light', fontSize: 16, notifications: true,  highContrast: false, subtitles: false, createdAt: new Date() },
+    { _id: 'user-2', name: 'Arjun Mehta',  email: 'arjun@demo.com', password: hash, role: 'user', status: 'active', isDeleted: false, restrictedCapabilities: [], language: 'Tamil', region: 'South India', storyPreferences: ['resistance','migration'], narrationMode: 'text',  karma: 320, badges: ['Story Seed'],                    theme: 'dark',  fontSize: 14, notifications: false, highContrast: false, subtitles: true,  createdAt: new Date() },
   ];
 
   inMemoryStore.stories = SEED_STORIES.map((s, i) => ({
     ...s,
-    _id:        `story-${i + 1}`,
-    author:     `user-${(i % 2) + 1}`,
-    authorName: i % 2 === 0 ? 'Priya Sharma' : 'Arjun Mehta',
-    audioUrl:   null,
-    videoUrl:   null,
-    voterIds:   [],
-    nodeGraph:  [],
-    createdAt:  new Date(),
-    updatedAt:  new Date(),
+    _id:              `story-${i + 1}`,
+    author:           `user-${(i % 2) + 1}`,
+    authorName:       i % 2 === 0 ? 'Priya Sharma' : 'Arjun Mehta',
+    audioUrl:         null,
+    videoUrl:         null,
+    isModerated:      true,
+    moderationStatus: 'approved',
+    isDeleted:        false,
+    voterIds:         [],
+    nodeGraph:        [],
+    rating:           4.8,
+    ratingCount:      2,
+    reviews:          [
+      {
+        _id:       `rev-${i + 1}-1`,
+        userId:    'user-2',
+        userName:  'Arjun Mehta',
+        rating:    5,
+        comment:   'A deeply evocative piece of oral tradition. The cultural rhythm and atmosphere are magnificent.',
+        createdAt: new Date(Date.now() - 86400000 * 2),
+        updatedAt: new Date(Date.now() - 86400000 * 2)
+      },
+      {
+        _id:       `rev-${i + 1}-2`,
+        userId:    'admin-1',
+        userName:  'Master Administrator',
+        rating:    4.6,
+        comment:   'Authentic folklore preservation with resonant historical depth. Highly recommended.',
+        createdAt: new Date(Date.now() - 86400000),
+        updatedAt: new Date(Date.now() - 86400000)
+      }
+    ],
+    createdAt:        new Date(),
+    updatedAt:        new Date(),
   }));
+
+  inMemoryStore.notifications = [
+    {
+      _id: 'notif-1',
+      recipient: 'user-1',
+      recipientRole: 'user',
+      title: 'Welcome to KathaVani Archive',
+      message: 'Your storytelling journey has begun. Submit traditional folklore to share with your cultural region.',
+      type: 'system',
+      link: '/storyteller',
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000 * 2)
+    },
+    {
+      _id: 'notif-2',
+      recipient: 'user-1',
+      recipientRole: 'user',
+      title: 'Story Approved & Published Globally',
+      message: 'Your manuscript "The Chola Emperor\'s Last Monsoon" was approved and is now live worldwide.',
+      type: 'story_approved',
+      link: '/stories/story-1',
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000)
+    },
+    {
+      _id: 'notif-3',
+      recipient: 'admin-1',
+      recipientRole: 'admin',
+      title: 'Admin Console Initialized',
+      message: 'Security monitoring and moderation registries are active. Check the review queue for pending folklore.',
+      type: 'admin_moderation',
+      link: '/admin/stories',
+      isRead: false,
+      createdAt: new Date(Date.now() - 3600000 * 3)
+    }
+  ];
 };
 
 const getStore = () => inMemoryStore;

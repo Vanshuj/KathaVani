@@ -3,7 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faPlay, faStop, faVolumeUp, faMapMarkerAlt, faSearch, 
-  faHeart, faBookOpen, faMap, faInbox, faLanguage, faSpinner 
+  faHeart, faBookOpen, faMap, faInbox, faLanguage, faSpinner,
+  faPenToSquare, faStar
 } from '@fortawesome/free-solid-svg-icons';
 import { getStories, voteStory, getGeoStories } from '../services/api';
 import { useSpeech } from '../hooks/useSpeech';
@@ -338,6 +339,44 @@ export default function ListenerPage() {
                       <button onClick={() => handleVote(story._id)} className="btn btn-ghost btn-sm" aria-label={`Vote for story, current votes: ${story.votes}`}>
                         <FontAwesomeIcon icon={faHeart} style={{ color: 'var(--vermillion)' }} /> {story.votes}
                       </button>
+                      <span
+                        style={{
+                          fontSize: '0.82rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 3,
+                          color: 'var(--gold)',
+                          fontWeight: 700
+                        }}
+                        title={story.ratingCount > 0 ? `${Number(story.rating).toFixed(1)}/5 stars (${story.ratingCount} reviews)` : 'Not yet reviewed'}
+                      >
+                        <FontAwesomeIcon icon={faStar} />
+                        <span style={{ color: 'var(--text-primary)' }}>
+                          {story.rating > 0 ? Number(story.rating).toFixed(1) : '—'}
+                        </span>
+                        {story.ratingCount > 0 && (
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem', fontWeight: 500 }}>
+                            ({story.ratingCount})
+                          </span>
+                        )}
+                      </span>
+                      {user && (
+                        (String(user._id || user.id) === String(story.author?._id || story.author)) ||
+                        (user.name && story.authorName && user.name.toLowerCase() === story.authorName.toLowerCase()) ||
+                        user.role === 'admin'
+                      ) && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/storyteller?edit=${story._id}`);
+                          }}
+                          className="btn btn-ghost btn-sm"
+                          style={{ color: 'var(--terracotta)', fontWeight: 600 }}
+                          title="Edit your published story"
+                        >
+                          <FontAwesomeIcon icon={faPenToSquare} /> Edit
+                        </button>
+                      )}
                       <div style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         <span style={{ color: 'var(--jade)', fontWeight: 600 }}>{story.authenticity}%</span> heritage match
                       </div>

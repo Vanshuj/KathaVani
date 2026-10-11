@@ -8,6 +8,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import CookieConsent from './CookieConsent';
+import NotificationBell from './NotificationBell';
 import logo from '../assets/logo.png';
 
 export default function Layout() {
@@ -130,6 +131,9 @@ export default function Layout() {
             >
               <FontAwesomeIcon icon={faWifi} size="xs" style={{ opacity: isOnline ? 0.9 : 0.4 }} />
             </span>
+
+            {/* Notification Bell */}
+            <NotificationBell isAdmin={false} />
 
             {/* Theme Toggle (Sun/Moon) */}
             <button

@@ -4,14 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlay, faStop, faHeart, faArrowLeft, faMapMarkerAlt, faCalendar,
   faLanguage, faMicrophone, faVideo, faMusic, faCodeBranch, faWaveSquare, faShieldAlt,
-  faClock, faBookmark, faShareAlt, faCheck, faFont
+  faClock, faBookmark, faShareAlt, faCheck, faFont, faPenToSquare, faSave, faSpinner, faStar
 } from '@fortawesome/free-solid-svg-icons';
-import { getStory, voteStory, addKarma } from '../services/api';
+import { getStory, updateStory, voteStory, addKarma } from '../services/api';
 import { useSpeech } from '../hooks/useSpeech';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import { LANGUAGES, analyzeSentiment } from '../services/mockAI';
 import AuthenticityMeter from '../components/AuthenticityMeter';
+import StoryReviews from '../components/StoryReviews';
 import { translateStory, LANGUAGE_TO_CODE } from '../services/translationService';
 
 export default function StoryDetail() {
@@ -24,6 +25,19 @@ export default function StoryDetail() {
   const [translatedTitle, setTranslatedTitle] = useState('');
   const [translatedContent, setTranslatedContent] = useState('');
   const [translating, setTranslating] = useState(false);
+
+  const [accessRestricted, setAccessRestricted] = useState(null);
+
+  // Edit manuscript state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    content: '',
+    language: 'English',
+    region: 'Pan India',
+    tags: []
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
 
   // Distraction-Free Reader Customization Controls
   const [fontSize, setFontSizeState] = useState('medium'); // 'small' | 'medium' | 'large'
@@ -66,7 +80,13 @@ export default function StoryDetail() {
       if (s && s.content) {
         setSentiment(analyzeSentiment(s.content));
       }
-    }).catch(() => setLoading(false));
+    }).catch(err => {
+      setLoading(false);
+      const errMsg = err.response?.data?.error || err.error;
+      if (err.response?.status === 403 || (errMsg && errMsg.toLowerCase().includes('region'))) {
+        setAccessRestricted(errMsg || 'This story is currently pending administrative approval and is only accessible to users belonging to its cultural region.');
+      }
+    });
   }, [id]);
 
   useEffect(() => {
@@ -162,6 +182,49 @@ export default function StoryDetail() {
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
+  useEffect(() => {
+    if (story) {
+      setEditFormData({
+        title: story.title || '',
+        content: story.content || '',
+        language: story.language || 'English',
+        region: story.region || 'Pan India',
+        tags: story.tags || []
+      });
+    }
+  }, [story]);
+
+  const isAuthor = Boolean(
+    user && story && (
+      String(user._id || user.id) === String(story.author?._id || story.author) ||
+      (user.name && story.authorName && user.name.toLowerCase() === story.authorName.toLowerCase()) ||
+      user.role === 'admin'
+    )
+  );
+
+  const handleSaveEdit = async (e) => {
+    if (e) e.preventDefault();
+    if (!editFormData.title.trim() || !editFormData.content.trim()) {
+      showNotification('Title and narrative content are required', 'warning');
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const updated = await updateStory(story._id, editFormData);
+      setStory(prev => ({ ...prev, ...updated }));
+      setTranslatedTitle(updated.title);
+      setTranslatedContent(updated.content);
+      translationCacheRef.current = {};
+      if (updated.content) setSentiment(analyzeSentiment(updated.content));
+      setIsEditModalOpen(false);
+      showNotification('Manuscript updated successfully in archive!', 'success');
+    } catch (err) {
+      showNotification(err.error || 'Failed to update manuscript', 'error');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '4rem 1rem', textAlign: 'center' }}>
@@ -169,6 +232,25 @@ export default function StoryDetail() {
         <div style={{ fontFamily: 'var(--font-editorial)', fontStyle: 'italic', color: 'var(--charcoal-muted)' }}>
           Retrieving manuscript from archive...
         </div>
+      </div>
+    );
+  }
+
+  if (accessRestricted) {
+    return (
+      <div style={{ textAlign: 'center', padding: '5rem 1.5rem', maxWidth: '620px', margin: '0 auto' }}>
+        <div style={{ fontSize: '3rem', color: '#D97706', marginBottom: '1.25rem' }}>
+          <FontAwesomeIcon icon={faMapMarkerAlt} />
+        </div>
+        <h2 style={{ fontFamily: 'var(--font-display)', color: 'var(--forest-green)', marginBottom: '0.85rem' }}>
+          Regional Lore Restricted
+        </h2>
+        <p style={{ color: 'var(--charcoal-muted)', lineHeight: 1.65, marginBottom: '2rem', fontSize: '1.05rem' }}>
+          {accessRestricted}
+        </p>
+        <button onClick={() => navigate(-1)} className="btn btn-primary">
+          Return to Stories Lounge
+        </button>
       </div>
     );
   }
@@ -199,6 +281,29 @@ export default function StoryDetail() {
         <div className="reading-progress-bar" style={{ width: `${scrollProgress}%` }} />
       </div>
 
+      {/* Regional Status Alert if Story is Pending */}
+      {story && story.moderationStatus === 'pending' && (
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            border: '1.5px solid rgba(245, 158, 11, 0.35)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.85rem 1.25rem',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            color: '#D97706',
+            fontSize: '0.88rem'
+          }}
+        >
+          <FontAwesomeIcon icon={faMapMarkerAlt} />
+          <span>
+            <strong>Regional Preview:</strong> This story is currently pending administrative approval and is visible exclusively to users belonging to the <u>{story.region || 'local'}</u> cultural region. Once approved, it will be published globally.
+          </span>
+        </div>
+      )}
+
       {/* Reader Navigation & Utility Bar */}
       <div
         style={{
@@ -210,9 +315,28 @@ export default function StoryDetail() {
           gap: '1rem'
         }}
       >
-        <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm" style={{ borderColor: 'var(--border-delicate)' }}>
-          <FontAwesomeIcon icon={faArrowLeft} /> Return to Lounge
-        </button>
+        <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm" style={{ borderColor: 'var(--border-delicate)' }}>
+            <FontAwesomeIcon icon={faArrowLeft} /> Return to Lounge
+          </button>
+          {isAuthor && (
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="btn btn-sm btn-primary"
+              style={{
+                borderRadius: 'var(--radius-pill)',
+                padding: '0.38rem 0.95rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem'
+              }}
+              title="Edit your published story"
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+              Edit Manuscript
+            </button>
+          )}
+        </div>
 
         {/* Reader Typography & Utility Controls */}
         <div
@@ -385,6 +509,25 @@ export default function StoryDetail() {
         >
           <span>
             Preserved by <strong style={{ color: 'var(--charcoal)', fontStyle: 'italic' }}>{story.authorName}</strong>
+            {isAuthor && (
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                style={{
+                  marginLeft: '0.55rem',
+                  border: 'none',
+                  background: 'var(--terracotta-subtle)',
+                  color: 'var(--terracotta)',
+                  borderRadius: 'var(--radius-pill)',
+                  padding: '0.2rem 0.65rem',
+                  fontSize: '0.74rem',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+                title="Edit your published manuscript"
+              >
+                <FontAwesomeIcon icon={faPenToSquare} style={{ marginRight: 4 }} /> Edit
+              </button>
+            )}
           </span>
           {story.region && (
             <span>
@@ -399,6 +542,29 @@ export default function StoryDetail() {
           <span>
             <FontAwesomeIcon icon={faLanguage} style={{ color: 'var(--forest-green)', marginRight: 4 }} />
             {story.language || 'Original Tongue'}
+          </span>
+          <span
+            onClick={() => {
+              const el = document.getElementById('reviews-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            style={{
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 4,
+              color: 'var(--gold)',
+              fontWeight: 700
+            }}
+            title="Jump to community listener reviews"
+          >
+            <FontAwesomeIcon icon={faStar} />
+            <span style={{ color: 'var(--charcoal)' }}>
+              {story.rating > 0 ? Number(story.rating).toFixed(1) : 'New'}
+            </span>
+            <span style={{ color: 'var(--charcoal-muted)', fontSize: '0.8rem', fontWeight: 500 }}>
+              ({story.ratingCount || 0})
+            </span>
           </span>
         </div>
       </header>
@@ -611,6 +777,241 @@ export default function StoryDetail() {
               src={`https://www.openstreetmap.org/export/embed.html?bbox=${story.lng - 2},${story.lat - 2},${story.lng + 2},${story.lat + 2}&layer=mapnik&marker=${story.lat},${story.lng}`}
               style={{ width: '100%', height: '100%', border: 'none' }}
             />
+          </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          8b. COMMUNITY REVIEWS & RATINGS SECTION
+      ────────────────────────────────────────────────────────────── */}
+      <StoryReviews
+        storyId={story._id}
+        initialRating={story.rating || 0}
+        initialRatingCount={story.ratingCount || 0}
+        initialReviews={story.reviews || []}
+        onRatingUpdate={(newRating, newCount, newReviews) => {
+          setStory(prev => ({
+            ...prev,
+            rating: newRating,
+            ratingCount: newCount,
+            reviews: newReviews
+          }));
+        }}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────
+          9. 3D CLAYMORPHIC MANUSCRIPT REVISION MODAL
+      ────────────────────────────────────────────────────────────── */}
+      {isEditModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
+          <div
+            className="modal"
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxWidth: 720,
+              width: '94%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-clay-card)',
+              background: 'var(--clay-bg-card)',
+              border: '1.5px solid var(--clay-border)',
+              padding: '1.75rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid var(--clay-border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--terracotta-subtle)', color: 'var(--terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--forest-green)', fontFamily: 'var(--font-display)' }}>
+                    Edit Published Manuscript
+                  </h2>
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--charcoal-muted)' }}>
+                    Revise your preserved oral lore and cultural attributes
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="btn btn-ghost btn-sm"
+                style={{ border: 'none', borderRadius: '50%', width: 32, height: 32, padding: 0 }}
+                aria-label="Close revision modal"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit}>
+              {/* Story Title */}
+              <div style={{ marginBottom: '1.1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.35rem', color: 'var(--charcoal)' }}>
+                  Story Title
+                </label>
+                <input
+                  type="text"
+                  value={editFormData.title}
+                  onChange={e => setEditFormData({ ...editFormData, title: e.target.value })}
+                  placeholder="Manuscript Title…"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.95rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1.5px solid var(--clay-border)',
+                    background: 'var(--bg-elevated)',
+                    color: 'var(--text-primary)',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.1rem'
+                  }}
+                />
+              </div>
+
+              {/* Language & Region */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.35rem', color: 'var(--charcoal)' }}>
+                    Original Tongue
+                  </label>
+                  <select
+                    value={editFormData.language}
+                    onChange={e => setEditFormData({ ...editFormData, language: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: 'var(--radius-sm)', border: '1.5px solid var(--clay-border)' }}
+                  >
+                    {['English', 'Hindi', 'Tamil', 'Telugu', 'Bengali', 'Marathi', 'Gujarati', 'Kannada', 'Malayalam', 'Odia', 'Punjabi', 'Assamese'].map(l => (
+                      <option key={l} value={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.35rem', color: 'var(--charcoal)' }}>
+                    Cultural Region
+                  </label>
+                  <select
+                    value={editFormData.region}
+                    onChange={e => setEditFormData({ ...editFormData, region: e.target.value })}
+                    style={{ width: '100%', padding: '0.55rem', borderRadius: 'var(--radius-sm)', border: '1.5px solid var(--clay-border)' }}
+                  >
+                    {['North India', 'South India', 'East India', 'West India', 'Central India', 'Northeast India', 'Pan India'].map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Cultural Tags */}
+              <div style={{ marginBottom: '1.1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.86rem', fontWeight: 700, marginBottom: '0.35rem', color: 'var(--charcoal)' }}>
+                  Cultural Tags
+                </label>
+                <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                  {['mythology', 'resistance', 'migration', 'folklore', 'tribal', 'history', 'nature', 'family'].map(t => {
+                    const isSelected = editFormData.tags.includes(t);
+                    return (
+                      <button
+                        type="button"
+                        key={t}
+                        onClick={() => {
+                          const nextTags = isSelected
+                            ? editFormData.tags.filter(x => x !== t)
+                            : [...editFormData.tags, t];
+                          setEditFormData({ ...editFormData, tags: nextTags });
+                        }}
+                        style={{
+                          border: '1.5px solid var(--clay-border)',
+                          borderRadius: 'var(--radius-pill)',
+                          padding: '0.3rem 0.8rem',
+                          fontSize: '0.78rem',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          background: isSelected ? 'var(--clay-btn-primary-bg)' : 'var(--clay-bg-card)',
+                          color: isSelected ? '#fff' : 'var(--text-primary)',
+                          boxShadow: isSelected ? 'var(--clay-btn-primary-shadow)' : 'var(--shadow-clay-sm)'
+                        }}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Story Narrative Content */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                  <label style={{ fontSize: '0.86rem', fontWeight: 700, margin: 0, color: 'var(--charcoal)' }}>
+                    Manuscript Text
+                  </label>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--charcoal-muted)' }}>
+                    {editFormData.content.split(/\s+/).filter(Boolean).length} words · {editFormData.content.length} chars
+                  </span>
+                </div>
+                <textarea
+                  rows={10}
+                  value={editFormData.content}
+                  onChange={e => setEditFormData({ ...editFormData, content: e.target.value })}
+                  required
+                  placeholder="Preserve your narrative here..."
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1.5px solid var(--clay-border)',
+                    background: 'var(--bg-elevated)',
+                    color: 'var(--text-primary)',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '1rem',
+                    lineHeight: 1.7,
+                    resize: 'vertical'
+                  }}
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    navigate(`/storyteller?edit=${story._id}`);
+                  }}
+                  className="btn btn-ghost btn-sm"
+                  style={{ color: 'var(--terracotta)' }}
+                >
+                  <FontAwesomeIcon icon={faCodeBranch} style={{ marginRight: 5 }} />
+                  Open in Branching Workshop →
+                </button>
+
+                <div style={{ display: 'flex', gap: '0.65rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditModalOpen(false)}
+                    className="btn btn-ghost"
+                    disabled={savingEdit}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={savingEdit || !editFormData.title.trim() || !editFormData.content.trim()}
+                  >
+                    {savingEdit ? (
+                      <>
+                        <FontAwesomeIcon icon={faSpinner} spin style={{ marginRight: 6 }} />
+                        Saving Changes…
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={faSave} style={{ marginRight: 6 }} />
+                        Save Revisions
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -9,7 +9,9 @@
     "dev:frontend": "cd frontend && npm start",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "start:backend": "cd backend && npm start",
-    "start:frontend": "cd frontend && npm start"
+    "start:frontend": "cd frontend && npm start",
+    "seed:admin": "cd backend && npm run seed:admin",
+    "test:security": "cd backend && npm run test:security"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
+import { AdminAuthProvider } from './context/AdminAuthContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import StorytellerPage from './pages/StorytellerPage';
@@ -15,6 +16,16 @@ import TermsPage from './pages/TermsPage';
 import CookiesPolicyPage from './pages/CookiesPolicyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
 import { useAuth } from './context/AuthContext';
+
+// Admin Console Components
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminStories from './pages/admin/AdminStories';
+import AdminManagement from './pages/admin/AdminManagement';
+import AdminLogs from './pages/admin/AdminLogs';
+
 import './index.css';
 
 function ProtectedRoute({ children }) {
@@ -26,6 +37,22 @@ function ProtectedRoute({ children }) {
 function AppRoutes() {
   return (
     <Routes>
+      {/* ─────────────────────────────────────────────────────────────
+          1. SECURE DEDICATED ADMIN PORTAL ROUTES
+      ────────────────────────────────────────────────────────────── */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="stories" element={<AdminStories />} />
+        <Route path="admins" element={<AdminManagement />} />
+        <Route path="logs" element={<AdminLogs />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Route>
+
+      {/* ─────────────────────────────────────────────────────────────
+          2. PUBLIC & COMMUNITY STORYTELLING PORTAL ROUTES
+      ────────────────────────────────────────────────────────────── */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="auth" element={<AuthPage />} />
@@ -56,7 +83,9 @@ export default function App() {
     <BrowserRouter>
       <AppProvider>
         <AuthProvider>
-          <AppRoutes />
+          <AdminAuthProvider>
+            <AppRoutes />
+          </AdminAuthProvider>
         </AuthProvider>
       </AppProvider>
     </BrowserRouter>
