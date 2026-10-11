@@ -182,34 +182,51 @@ const seedMongo = async () => {
       console.log(`🌱  Ensured demo users exist in MongoDB.`);
     }
 
-    // Ensure at least one initial administrator exists
-    const adminCount = await User.countDocuments({ role: 'admin' });
-    if (adminCount === 0) {
-      const bcrypt = require('bcryptjs');
-      const adminEmail = (process.env.ADMIN_EMAIL || 'admin@kathavani.org').trim().toLowerCase();
-      const adminPassword = process.env.ADMIN_PASSWORD || 'AdminKatha@2024!';
-      const adminName = process.env.ADMIN_NAME || 'Master Administrator';
-      const hash = await bcrypt.hash(adminPassword, 10);
+    // Ensure primary administrator exists and has synchronized credentials
+    const bcrypt = require('bcryptjs');
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@kathavani.org').trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'AdminKatha@2024!';
+    const adminName = process.env.ADMIN_NAME || 'Master Administrator';
+    const hash = await bcrypt.hash(adminPassword, 10);
 
-      const existingUser = await User.findOne({ email: adminEmail });
-      if (existingUser) {
-        existingUser.role = 'admin';
-        existingUser.status = 'active';
-        await existingUser.save();
-        console.log(`🛡️  Promoted existing user ${adminEmail} to initial Administrator.`);
-      } else {
-        await User.create({
-          name: adminName,
-          email: adminEmail,
-          password: hash,
-          role: 'admin',
-          status: 'active',
-          language: 'English',
-          region: 'Pan India',
-          karma: 999,
-          badges: ['Master Storyteller', 'Cultural Guardian']
-        });
-        console.log(`🛡️  Created initial Administrator account (${adminEmail}) from configuration.`);
+    let primaryAdmin = await User.findOne({ email: adminEmail });
+    if (!primaryAdmin) {
+      await User.create({
+        name: adminName,
+        email: adminEmail,
+        password: hash,
+        role: 'admin',
+        status: 'active',
+        isDeleted: false,
+        language: 'English',
+        region: 'Pan India',
+        karma: 999,
+        badges: ['Master Storyteller', 'Cultural Guardian']
+      });
+      console.log(`🛡️  Created primary Administrator account (${adminEmail}) in MongoDB.`);
+    } else {
+      let changed = false;
+      if (primaryAdmin.role !== 'admin') {
+        primaryAdmin.role = 'admin';
+        changed = true;
+      }
+      if (primaryAdmin.status !== 'active') {
+        primaryAdmin.status = 'active';
+        changed = true;
+      }
+      if (primaryAdmin.isDeleted) {
+        primaryAdmin.isDeleted = false;
+        changed = true;
+      }
+      const match = await bcrypt.compare(adminPassword, primaryAdmin.password || '');
+      if (!match) {
+        primaryAdmin.password = hash;
+        changed = true;
+        console.log(`🛡️  Synchronized Administrator (${adminEmail}) password with configured secret.`);
+      }
+      if (changed) {
+        await primaryAdmin.save();
+        console.log(`🛡️  Updated primary Administrator (${adminEmail}) credentials in MongoDB.`);
       }
     }
 
