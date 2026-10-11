@@ -157,45 +157,6 @@ export default function AdminLogin() {
           <strong style={{ color: 'var(--terracotta)' }}>Notice:</strong> This console is strictly reserved for authorized platform administrators. Public registration is disabled and all activities are recorded in audit logs.
         </div>
 
-        {/* Quick Fill Admin Credentials */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.65rem 0.95rem',
-            background: 'var(--clay-tray, #F1ECE2)',
-            borderRadius: 'var(--radius-md, 12px)',
-            border: '1px solid var(--border-delicate, rgba(45,60,56,0.1))',
-            marginBottom: '1.25rem',
-            fontSize: '0.78rem'
-          }}
-        >
-          <div>
-            <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Default Admin: </span>
-            <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--terracotta)', fontWeight: 600 }}>admin@kathavani.org</code>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setEmail('admin@kathavani.org');
-              setPassword('AdminKatha@2024!');
-              setErrorMsg('');
-            }}
-            className="btn btn-ghost btn-sm"
-            style={{
-              padding: '0.25rem 0.65rem',
-              fontSize: '0.74rem',
-              fontWeight: 700,
-              color: 'var(--forest-green)',
-              borderRadius: 'var(--radius-pill)',
-              background: 'rgba(255, 255, 255, 0.7)'
-            }}
-          >
-            Auto Fill
-          </button>
-        </div>
-
         {errorMsg && (
           <div
             style={{
@@ -246,7 +207,7 @@ export default function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@kathavani.org"
+                placeholder="admin@organization.com"
                 style={{
                   width: '100%',
                   padding: '0.85rem 1.1rem 0.85rem 2.6rem',
