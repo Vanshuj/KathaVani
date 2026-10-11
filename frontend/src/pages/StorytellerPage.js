@@ -102,7 +102,7 @@ export default function StorytellerPage() {
       const karmaResult = await addKarma(20);
       updateUser({ karma: karmaResult.karma, badges: karmaResult.badges });
       setPublishedId(story._id);
-      showNotification('Story published to Community Vault! +20 Karma points', 'success');
+      showNotification('Story published to Community Vault!', 'success');
     } catch (err) {
       showNotification(err.error || 'Failed to publish', 'error');
     } finally {
@@ -163,9 +163,9 @@ export default function StorytellerPage() {
           <p style={{ color: 'var(--text-muted)', margin: 0 }}>Craft, branch, and publish oral and written traditions to the vault</p>
         </div>
         {user && (
-          <span className="karma-display">
-            <FontAwesomeIcon icon={faAward} style={{ marginRight: 6, color: 'var(--gold)' }} />
-            {user.karma || 0} Karma
+          <span className="badge" style={{ padding: '0.4rem 0.9rem', fontSize: '0.82rem', background: 'var(--terracotta-subtle)', color: 'var(--terracotta)', border: '1px solid rgba(184, 93, 52, 0.3)' }}>
+            <FontAwesomeIcon icon={faAward} style={{ marginRight: 6 }} />
+            Story Custodian
           </span>
         )}
       </div>
@@ -195,11 +195,23 @@ export default function StorytellerPage() {
             </div>
             <div>
               <label>Story Tags</label>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap' }}>
                 {TAG_OPTIONS.map(tag => (
-                  <button key={tag} onClick={() => toggleTag(tag)}
-                    className={`tag tag-${tag}`}
-                    style={{ cursor: 'pointer', border: `1.5px solid ${selectedTags.includes(tag) ? 'currentColor' : 'transparent'}`, background: selectedTags.includes(tag) ? undefined : 'var(--bg-elevated)', padding: '0.3rem 0.8rem' }}>
+                  <button 
+                    key={tag} 
+                    onClick={() => toggleTag(tag)}
+                    className={`tag ${tag}`}
+                    style={{ 
+                      cursor: 'pointer', 
+                      border: '1.5px solid var(--clay-border)', 
+                      background: selectedTags.includes(tag) ? 'var(--clay-btn-primary-bg)' : 'var(--clay-bg-card)', 
+                      color: selectedTags.includes(tag) ? '#fff' : 'var(--text-primary)', 
+                      boxShadow: selectedTags.includes(tag) ? 'var(--clay-btn-primary-shadow)' : 'var(--shadow-clay-sm)', 
+                      borderRadius: 'var(--radius-pill)', 
+                      padding: '0.38rem 1rem',
+                      transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                    }}
+                  >
                     {tag}
                   </button>
                 ))}
@@ -317,7 +329,7 @@ Click 'Suggest Nodes' when you need inspiration for what happens next."
               <div>
                 <div style={{ marginBottom: '0.75rem' }}>
                   <h3 style={{ margin: '0 0 0.25rem' }}>Ready to Publish?</h3>
-                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Contribute your story to the community archive and earn Karma points</p>
+                  <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.9rem' }}>Contribute your story to the community archive for oral preservation</p>
                 </div>
 
                 <div style={{ margin: '0.75rem 0 1rem', padding: '0.75rem 1rem', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>

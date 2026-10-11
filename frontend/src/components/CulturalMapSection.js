@@ -25,7 +25,7 @@ export default function CulturalMapSection() {
       keeper: 'Preserved by Kinnauri Elders Council',
       x: 38,
       y: 18,
-      color: '#b85d34'
+      color: '#DD8E75'
     },
     {
       id: 'gangetic',
@@ -37,7 +37,7 @@ export default function CulturalMapSection() {
       keeper: 'Bundelkhand Women Collective',
       x: 48,
       y: 35,
-      color: '#c99738'
+      color: '#BE845E'
     },
     {
       id: 'western',
@@ -49,7 +49,7 @@ export default function CulturalMapSection() {
       keeper: 'Manganiyar Heritage Custodians',
       x: 25,
       y: 40,
-      color: '#b85d34'
+      color: '#B6594C'
     },
     {
       id: 'deccan',
@@ -61,7 +61,7 @@ export default function CulturalMapSection() {
       keeper: 'Sundari Bai & Forest Keepers',
       x: 36,
       y: 58,
-      color: '#5c7a67'
+      color: '#90AEB2'
     },
     {
       id: 'malabar',
@@ -73,7 +73,7 @@ export default function CulturalMapSection() {
       keeper: 'Kaveri River Boatmen',
       x: 42,
       y: 82,
-      color: '#b85d34'
+      color: '#DD8E75'
     },
     {
       id: 'eastern',
@@ -85,7 +85,7 @@ export default function CulturalMapSection() {
       keeper: 'Mahanadi Oral Keepers',
       x: 68,
       y: 48,
-      color: '#5c7a67'
+      color: '#90AEB2'
     }
   ];
 

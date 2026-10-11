@@ -29,7 +29,7 @@ export default function FeaturedStoryCard() {
         <div
           style={{
             minHeight: 360,
-            background: 'linear-gradient(145deg, #12281d 0%, #1b3b2b 65%, #2a523d 100%)',
+            background: 'linear-gradient(145deg, #243633 0%, #37514D 65%, #4A6D67 100%)',
             position: 'relative',
             padding: '2.5rem',
             display: 'flex',
@@ -50,8 +50,8 @@ export default function FeaturedStoryCard() {
                 width: 72,
                 height: 72,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, #ffeed3 20%, rgba(201,151,56,0.3) 70%, transparent 100%)',
-                boxShadow: '0 0 32px rgba(255,238,211,0.4)',
+                background: 'radial-gradient(circle, #FAF6F0 20%, rgba(190,132,94,0.3) 70%, transparent 100%)',
+                boxShadow: '0 0 32px rgba(190,132,94,0.35)',
                 opacity: 0.9
               }}
             />
@@ -147,7 +147,7 @@ export default function FeaturedStoryCard() {
                 <circle cx="50" cy="50" r="42" stroke="var(--gold-light)" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
                 <circle cx="50" cy="50" r="34" fill="rgba(201,151,56,0.12)" stroke="#e5b869" strokeWidth="1.2" />
                 {/* Diya Clay Bowl */}
-                <ellipse cx="50" cy="64" rx="24" ry="9" fill="#b85d34" stroke="#924420" strokeWidth="1.2" />
+                <ellipse cx="50" cy="64" rx="24" ry="9" fill="var(--ceramic-mug)" stroke="var(--cranberry)" strokeWidth="1.2" />
                 {/* Sacred Flame */}
                 <path d="M50 24C54 34 57 42 54 50C52 54 48 54 46 50C43 42 46 34 50 24Z" fill="#ff9900" />
                 <path d="M50 30C52 36 54 42 52 46C51 48 49 48 48 46C46 42 48 36 50 30Z" fill="#ffe066" />

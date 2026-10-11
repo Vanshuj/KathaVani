@@ -148,7 +148,7 @@ export default function ListenerPage() {
     try {
       await voteStory(storyId);
       setStories(prev => prev.map(s => s._id === storyId ? { ...s, votes: s.votes + 1 } : s));
-      showNotification('Vote recorded! +5 karma points', 'success');
+      showNotification('Vote recorded for this story!', 'success');
     } catch (err) {
       showNotification(err.error || 'Already voted', 'warning');
     }
@@ -193,16 +193,21 @@ export default function ListenerPage() {
       ) : (
         <>
           {/* Controls: Search & 12 Languages selector */}
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem', alignItems: 'center' }}>
-            <div style={{ position: 'relative', flex: '1 1 200px' }}>
-              <FontAwesomeIcon icon={faSearch} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search stories…" style={{ paddingLeft: '2.2rem' }} />
+          <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '1.35rem', alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: '1 1 240px' }}>
+              <FontAwesomeIcon icon={faSearch} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+              <input 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+                placeholder="Search stories, folklore, legends…" 
+                style={{ paddingLeft: '2.6rem', borderRadius: 'var(--radius-pill)', boxShadow: 'var(--shadow-clay-inset)', background: 'var(--bg-elevated)' }} 
+              />
             </div>
 
-            {/* 12 Main Indian Languages Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-elevated)', padding: '0.35rem 0.75rem', borderRadius: 'var(--radius-sm)', border: '1.5px solid var(--border)' }}>
-              <FontAwesomeIcon icon={faLanguage} style={{ color: 'var(--terracotta)' }} />
-              <label htmlFor="listener-lang-select" style={{ fontSize: '0.85rem', margin: 0, fontWeight: 600 }}>
+            {/* 12 Main Indian Languages Selector Pill */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', background: 'var(--clay-bg-card)', padding: '0.45rem 1.1rem', borderRadius: 'var(--radius-pill)', border: '1.5px solid var(--clay-border)', boxShadow: 'var(--shadow-clay-sm)' }}>
+              <FontAwesomeIcon icon={faLanguage} style={{ color: 'var(--ceramic-mug)', fontSize: '1.1rem' }} />
+              <label htmlFor="listener-lang-select" style={{ fontSize: '0.86rem', margin: 0, fontWeight: 700, color: 'var(--text-primary)' }}>
                 Language:
               </label>
               <select 
@@ -213,7 +218,7 @@ export default function ListenerPage() {
                   setPlayingId(null);
                   setSelectedLang(e.target.value);
                 }} 
-                style={{ width: 'auto', border: 'none', background: 'var(--bg-elevated)', padding: '0.2rem 0.4rem', fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer' }}
+                style={{ width: 'auto', border: 'none', background: 'transparent', boxShadow: 'none', padding: '0.15rem 0.4rem', fontWeight: 600, color: 'var(--text-primary)', cursor: 'pointer' }}
               >
                 <option value="All" style={{ background: 'var(--bg-card)', color: 'var(--text-primary)' }}>
                   All (Original Language)
@@ -234,12 +239,24 @@ export default function ListenerPage() {
             )}
           </div>
 
-          {/* Tag filters */}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+          {/* Tag filters (3D Clay Pebble Filter Pills) */}
+          <div style={{ display: 'flex', gap: '0.55rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
             {TAGS.map(tag => (
-              <button key={tag} onClick={() => setSelectedTag(tag)}
+              <button 
+                key={tag} 
+                onClick={() => setSelectedTag(tag)}
                 className={`tag ${tag !== 'all' ? `tag-${tag}` : ''}`}
-                style={{ cursor: 'pointer', background: selectedTag === tag ? 'var(--terracotta)' : 'var(--bg-elevated)', color: selectedTag === tag ? '#fff' : 'var(--text-secondary)', border: '1.5px solid var(--border)', padding: '0.35rem 0.85rem' }}>
+                style={{ 
+                  cursor: 'pointer', 
+                  background: selectedTag === tag ? 'var(--clay-btn-primary-bg)' : 'var(--clay-bg-card)', 
+                  color: selectedTag === tag ? '#fff' : 'var(--text-primary)', 
+                  border: '1.5px solid var(--clay-border)', 
+                  padding: '0.42rem 1.05rem',
+                  borderRadius: 'var(--radius-pill)',
+                  boxShadow: selectedTag === tag ? 'var(--clay-btn-primary-shadow)' : 'var(--shadow-clay-sm)',
+                  transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                }}
+              >
                 {tag === 'all' ? 'All Traditions' : tag}
               </button>
             ))}

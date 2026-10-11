@@ -21,7 +21,6 @@ export default function Layout() {
     { to: '/storyteller', label: 'Storyteller', icon: faMicrophone },
     { to: '/listener', label: 'Listener', icon: faBook },
     { to: '/vault', label: 'Vault', icon: faVault },
-    { to: '/gamification', label: 'Quests', icon: faTrophy },
     { to: '/settings', label: 'Settings', icon: faCog },
   ];
 
@@ -61,7 +60,7 @@ export default function Layout() {
                 width: 38,
                 height: 38,
                 objectFit: 'contain',
-                filter: 'drop-shadow(0 4px 10px rgba(184,93,52,0.22))'
+                filter: 'drop-shadow(0 4px 10px rgba(221,142,117,0.28))'
               }}
             />
             <div>
@@ -154,20 +153,10 @@ export default function Layout() {
 
             {/* User Auth */}
             {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                 <span style={{ fontSize: '0.84rem', color: 'var(--charcoal)', fontWeight: 600, fontFamily: 'var(--font-sans)' }}>
                   <FontAwesomeIcon icon={faUser} size="xs" style={{ marginRight: 5, color: 'var(--forest-green)' }} />
                   {user.name.split(' ')[0]}
-                </span>
-                <span
-                  className="karma-display"
-                  style={{
-                    padding: '0.2rem 0.6rem',
-                    fontSize: '0.74rem'
-                  }}
-                >
-                  <FontAwesomeIcon icon={faStar} size="xs" style={{ marginRight: 3 }} />
-                  {user.karma || 0}
                 </span>
                 <button
                   onClick={() => { logout(); navigate('/'); }}
@@ -323,7 +312,6 @@ export default function Layout() {
               <li><NavLink to="/listener" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Story Archive</NavLink></li>
               <li><NavLink to="/storyteller" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Storyteller Workshop</NavLink></li>
               <li><NavLink to="/vault" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Community Vault</NavLink></li>
-              <li><NavLink to="/gamification" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Quests & Ranks</NavLink></li>
             </ul>
           </div>
 

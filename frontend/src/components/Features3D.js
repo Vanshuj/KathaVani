@@ -31,8 +31,8 @@ export default function Features3D() {
           }}
         >
           {/* Brass Diya Base */}
-          <ellipse cx="25" cy="38" rx="16" ry="6" fill="#c99738" stroke="#a07525" strokeWidth="1" />
-          <path d="M12 36C12 30 25 24 25 24C25 24 38 30 38 36Z" fill="#b85d34" opacity="0.9" />
+          <ellipse cx="25" cy="38" rx="16" ry="6" fill="var(--camel-coat)" stroke="var(--camel-coat-dark)" strokeWidth="1" />
+          <path d="M12 36C12 30 25 24 25 24C25 24 38 30 38 36Z" fill="var(--ceramic-mug)" opacity="0.9" />
           {/* Flickering Flame */}
           <path
             d="M25 10C27 16 30 19 28 24C26 26 24 26 22 24C20 19 23 16 25 10Z"
@@ -115,20 +115,20 @@ export default function Features3D() {
           }}
         >
           {/* Handcrafted Heritage Archive Chest */}
-          <rect x="10" y="20" width="30" height="20" rx="3" fill="#1b3b2b" stroke="#0e2017" strokeWidth="1" />
-          <path d="M10 20C10 14 40 14 40 20Z" fill="#b85d34" stroke="#924420" strokeWidth="1" />
+          <rect x="10" y="20" width="30" height="20" rx="3" fill="var(--midnight)" stroke="var(--midnight-dark)" strokeWidth="1" />
+          <path d="M10 20C10 14 40 14 40 20Z" fill="var(--ceramic-mug)" stroke="var(--cranberry)" strokeWidth="1" />
           {/* Brass Filigree Brackets */}
-          <circle cx="25" cy="28" r="3.5" fill="#c99738" stroke="#a07525" strokeWidth="1" />
-          <line x1="25" y1="28" x2="25" y2="33" stroke="#a07525" strokeWidth="1.5" />
-          <line x1="12" y1="20" x2="38" y2="20" stroke="#c99738" strokeWidth="1" />
+          <circle cx="25" cy="28" r="3.5" fill="var(--camel-coat)" stroke="var(--camel-coat-dark)" strokeWidth="1" />
+          <line x1="25" y1="28" x2="25" y2="33" stroke="var(--camel-coat-dark)" strokeWidth="1.5" />
+          <line x1="12" y1="20" x2="38" y2="20" stroke="var(--camel-coat)" strokeWidth="1" />
         </svg>
       )
     },
     {
-      title: 'Quests & Badges',
-      desc: 'Earn karma, test cultural heritage knowledge, unlock badges, and become a recognized archivist.',
-      to: '/gamification',
-      tag: 'Cultural Custodianship',
+      title: 'Authenticity Verification',
+      desc: 'AI-assisted historical provenance scoring and elder community cross-verification of folk traditions.',
+      to: '/listener',
+      tag: 'Living Provenance',
       symbol: (isHovered) => (
         <svg
           width="44"
@@ -136,17 +136,18 @@ export default function Features3D() {
           viewBox="0 0 50 50"
           fill="none"
           style={{
-            transform: isHovered ? 'rotate(10deg) scale(1.08)' : 'rotate(0deg) scale(1)',
+            transform: isHovered ? 'rotate(8deg) scale(1.08)' : 'rotate(0deg) scale(1)',
             transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
-          {/* Temple Laurel / Medallion */}
-          <circle cx="25" cy="22" r="14" fill="rgba(201, 151, 56, 0.15)" stroke="var(--gold)" strokeWidth="1.5" />
-          <circle cx="25" cy="22" r="10" fill="none" stroke="var(--gold-dark)" strokeWidth="1" strokeDasharray="3 2" />
-          <polygon points="25,14 27.5,19 33,19.5 29,23.5 30,29 25,26 20,29 21,23.5 17,19.5 22.5,19" fill="var(--gold)" />
-          {/* Hanging Ribbon Tails */}
-          <path d="M21 34L17 44L23 41L25 44" fill="var(--terracotta)" />
-          <path d="M29 34L33 44L27 41L25 44" fill="var(--forest-green)" />
+          {/* Ancient Wax Stamp / Seal */}
+          <circle cx="25" cy="23" r="14" fill="rgba(184, 93, 52, 0.15)" stroke="var(--terracotta)" strokeWidth="1.5" />
+          <circle cx="25" cy="23" r="10" fill="none" stroke="var(--terracotta)" strokeWidth="1" strokeDasharray="3 2" />
+          {/* Authenticity Verification Crest */}
+          <path d="M19 23L23 27L31 19" stroke="var(--forest-green)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Ribbon Tails */}
+          <path d="M21 36L18 44L23 41L25 44" fill="var(--terracotta)" />
+          <path d="M29 36L32 44L27 41L25 44" fill="var(--forest-green)" />
         </svg>
       )
     },

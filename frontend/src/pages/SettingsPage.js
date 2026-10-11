@@ -214,7 +214,7 @@ export default function SettingsPage() {
             <div>
               <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem' }}>Notifications</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: 450 }}>
-                {[{ key: 'notifications', label: 'Story Updates', desc: 'Get notified when new stories are published' }, { key: 'voteNotifications', label: 'Vote Alerts', desc: 'Know when someone votes for your stories' }, { key: 'karmaNotifications', label: 'Karma Milestones', desc: 'Celebrate karma achievements and badge unlocks' }].map(item => (
+                {[{ key: 'notifications', label: 'Story Updates', desc: 'Get notified when new stories are published' }, { key: 'voteNotifications', label: 'Vote Alerts', desc: 'Know when someone votes for your stories' }, { key: 'archiveNotifications', label: 'Archive Highlights', desc: 'Curated weekly oral folklore releases' }].map(item => (
                   <div key={item.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '1rem', background: 'var(--bg)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
                     <div>
                       <div style={{ fontWeight: 600 }}>{item.label}</div>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                     <span style={{ color: 'var(--text-muted)' }}>Registered Name:</span><strong>{user?.name}</strong>
                     <span style={{ color: 'var(--text-muted)' }}>Email Address:</span><strong>{user?.email}</strong>
                     <span style={{ color: 'var(--text-muted)' }}>Preferred Dialect:</span><span>{prefs.language}</span>
-                    <span style={{ color: 'var(--text-muted)' }}>Karma Balance:</span><span>{user?.karma || 0} points</span>
+                    <span style={{ color: 'var(--text-muted)' }}>Account Status:</span><span>Verified Story Contributor</span>
                     <span style={{ color: 'var(--text-muted)' }}>Data Collection:</span><span>Strictly Necessary & Functional Only</span>
                   </div>
                 </div>

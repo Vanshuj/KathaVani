@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import StorytellerPage from './pages/StorytellerPage';
 import ListenerPage from './pages/ListenerPage';
 import VaultPage from './pages/VaultPage';
-import GamificationPage from './pages/GamificationPage';
 import SettingsPage from './pages/SettingsPage';
 import StoryDetail from './pages/StoryDetail';
 import AuthPage from './pages/AuthPage';
@@ -34,7 +33,7 @@ function AppRoutes() {
         <Route path="listener" element={<ListenerPage />} />
         <Route path="vault" element={<VaultPage />} />
         <Route path="stories/:id" element={<StoryDetail />} />
-        <Route path="gamification" element={<ProtectedRoute><GamificationPage /></ProtectedRoute>} />
+        <Route path="gamification" element={<Navigate to="/" replace />} />
         <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
         <Route path="privacy" element={<PrivacyPolicyPage />} />
         <Route path="terms" element={<TermsPage />} />

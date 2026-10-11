@@ -134,7 +134,7 @@ export default function StoryDetail() {
     try {
       const res = await voteStory(id);
       setStory(prev => ({ ...prev, votes: res.votes, authenticity: res.authenticity }));
-      showNotification('+5 karma points for voting!', 'success');
+      showNotification('Thank you for voting on this story!', 'success');
     } catch (err) { showNotification(err.error || 'Already voted', 'warning'); }
   };
 

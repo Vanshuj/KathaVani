@@ -32,7 +32,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
 // PUT /api/users/preferences
 router.put('/preferences', authMiddleware, async (req, res) => {
   try {
-    const allowed = ['name','language','region','storyPreferences','narrationMode','theme','fontSize','notifications','highContrast','subtitles'];
+    const allowed = ['name','language','region','storyPreferences','narrationMode','theme','fontSize','notifications','highContrast','subtitles','listenedSeconds'];
     const updates = {};
     allowed.forEach(k => { if (req.body[k] !== undefined) updates[k] = req.body[k]; });
 

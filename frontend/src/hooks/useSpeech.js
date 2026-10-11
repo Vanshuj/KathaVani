@@ -20,6 +20,45 @@ function chunkText(text, maxLength) {
   return chunks;
 }
 
+// Active speaker registry to track and coordinate real user oral listening time
+const activeSpeakerSet = new Set();
+let globalListenInterval = null;
+
+function registerActiveSpeaker(id) {
+  activeSpeakerSet.add(id);
+  if (!globalListenInterval) {
+    globalListenInterval = setInterval(() => {
+      try {
+        const stored = localStorage.getItem('kv_user_listen_seconds');
+        const current = stored !== null ? parseInt(stored, 10) : 960;
+        const next = current + 1;
+        localStorage.setItem('kv_user_listen_seconds', next.toString());
+        window.dispatchEvent(new CustomEvent('kv_listen_time_updated', {
+          detail: { seconds: next, active: true }
+        }));
+      } catch (err) {}
+    }, 1000);
+  }
+}
+
+function unregisterActiveSpeaker(id) {
+  activeSpeakerSet.delete(id);
+  if (activeSpeakerSet.size === 0 && globalListenInterval) {
+    clearInterval(globalListenInterval);
+    globalListenInterval = null;
+    try {
+      const stored = localStorage.getItem('kv_user_listen_seconds');
+      const current = stored !== null ? parseInt(stored, 10) : 960;
+      window.dispatchEvent(new CustomEvent('kv_listen_time_updated', {
+        detail: { seconds: current, active: false }
+      }));
+      window.dispatchEvent(new CustomEvent('kv_listen_stopped', {
+        detail: { seconds: current }
+      }));
+    } catch (err) {}
+  }
+}
+
 export function useSpeech() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -28,6 +67,20 @@ export function useSpeech() {
   const recognitionRef = useRef(null);
   const synthRef = useRef(window.speechSynthesis);
   const fallbackAudioRef = useRef(null);
+  const speakerIdRef = useRef(`speaker_${Math.random().toString(36).substring(2, 9)}`);
+
+  // Synchronize active speaking state with global listen time accumulator
+  useEffect(() => {
+    const id = speakerIdRef.current;
+    if (isSpeaking) {
+      registerActiveSpeaker(id);
+    } else {
+      unregisterActiveSpeaker(id);
+    }
+    return () => {
+      unregisterActiveSpeaker(id);
+    };
+  }, [isSpeaking]);
 
   useEffect(() => {
     if (!window.speechSynthesis) return;

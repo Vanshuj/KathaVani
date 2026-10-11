@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   notifications:     { type: Boolean, default: true },
   highContrast:      { type: Boolean, default: false },
   subtitles:         { type: Boolean, default: false },
+  listenedSeconds:   { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
