@@ -367,11 +367,12 @@ export default function Layout() {
           <div>
             &copy; {new Date().getFullYear()} KathaVani Cultural Heritage Foundation. Licensed under CC BY-NC 4.0.
           </div>
-          <div style={{ display: 'flex', gap: '1.35rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '1.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <NavLink to="/privacy" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Privacy Policy</NavLink>
             <NavLink to="/terms" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Terms & Conditions</NavLink>
             <NavLink to="/cookies" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Cookie Policy</NavLink>
             <NavLink to="/refund" style={{ color: 'var(--charcoal-muted)', textDecoration: 'none' }}>Refund Policy</NavLink>
+            <NavLink to="/admin" style={{ color: 'var(--terracotta)', textDecoration: 'none', fontWeight: 600 }}>Admin Console</NavLink>
           </div>
         </div>
       </footer>

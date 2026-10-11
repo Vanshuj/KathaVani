@@ -1,7 +1,17 @@
 import axios from 'axios';
 
-const rawUrl = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').trim().replace(/\/+$/, '');
-const API_BASE = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
+const getApiBase = () => {
+  if (process.env.REACT_APP_API_URL) {
+    const raw = process.env.REACT_APP_API_URL.trim().replace(/\/+$/, '');
+    return raw.endsWith('/api') ? raw : `${raw}/api`;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return 'https://kathavani-backend.onrender.com/api';
+  }
+  return 'http://localhost:5000/api';
+};
+
+const API_BASE = getApiBase();
 
 const api = axios.create({ baseURL: API_BASE });
 
